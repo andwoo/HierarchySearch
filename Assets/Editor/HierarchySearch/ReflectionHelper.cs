@@ -70,5 +70,10 @@ namespace HierarchySearch
                 BindingFlags.NonPublic |
                 BindingFlags.Public);
         }
+
+        public static Type GetTypeByName(string name, bool caseSensitive)
+        {
+            return GetTypesInAssemblies(GetAssemblies()).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
+        }
     }
 }
