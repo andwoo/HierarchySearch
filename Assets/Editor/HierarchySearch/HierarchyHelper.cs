@@ -1,4 +1,7 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace HierarchySearch
@@ -10,9 +13,16 @@ namespace HierarchySearch
             return Selection.activeGameObject;
         }
 
-        public static GameObject[] GetRootGameObjects()
+        public static List<GameObject> GetRootGameObjects()
         {
-            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects().ToList();
+        }
+
+        public static List<GameObject> GetGameObjectsWithType(Type type)
+        {
+            return GameObject.FindObjectsOfType(type)
+                .Select(component => (component as Component).gameObject)
+                .ToList();
         }
     }
 }

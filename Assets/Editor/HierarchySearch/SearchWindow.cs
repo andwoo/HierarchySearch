@@ -66,28 +66,22 @@ namespace HierarchySearch
             EditorGUILayout.LabelField("Component Name", EditorStyles.Header);
             EditorGUILayout.BeginHorizontal();
             m_DefaultComponentName = EditorGUILayout.TextField(m_DefaultComponentName);
-            if (GUILayout.Button("Search"))
+            if (GUILayout.Button("X", EditorStyles.SmallButtonWidth))
+            {
+                m_SearchResults.Clear();
+                m_DefaultComponentName = string.Empty;
+                GUI.FocusControl(null);
+                EditorApplication.RepaintHierarchyWindow();
+            }
+            else if (GUILayout.Button("Search", EditorStyles.MediumButtonWidth))
             {
                 m_SearchResults.Clear();
                 Type result = ReflectionHelper.GetTypeByName(m_DefaultComponentName, false);
                 if (result != null)
                 {
-                    GameObject.FindObjectsOfType(result).ToList().ForEach(script => m_SearchResults.Add((script as Component).gameObject.GetInstanceID()));
+                    HierarchyHelper.GetGameObjectsWithType(result).ForEach(go => m_SearchResults.Add(go.GetInstanceID()));
                 }
                 EditorApplication.RepaintHierarchyWindow();
-            }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-
-
-
-            EditorGUILayout.BeginVertical(GUI.skin.GetStyle("box"));
-            EditorGUILayout.LabelField("Field Type", EditorStyles.Header);
-            EditorGUILayout.BeginHorizontal();
-            m_DefaultFieldName = EditorGUILayout.TextField(m_DefaultFieldName);
-            if (GUILayout.Button("Search"))
-            {
-                m_SearchResults.Clear();
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
