@@ -1,7 +1,6 @@
 ﻿#define ENABLE_UNIT_TESTS
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -71,9 +70,28 @@ namespace HierarchySearch
                 BindingFlags.Public);
         }
 
+        public static PropertyInfo[] GetPropertiesForType(Type type)
+        {
+            return type.GetProperties(
+                BindingFlags.Instance |
+                BindingFlags.Static |
+                BindingFlags.FlattenHierarchy |
+                BindingFlags.NonPublic |
+                BindingFlags.Public);
+        }
+
+        //public static Type GetTypeByName(string name, bool caseSensitive)
+        //{
+        //    name = name.Trim();
+        //    return GetTypesInAssemblies(GetAssemblies()).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
+        //}
+
         public static Type GetTypeByName(string name, bool caseSensitive)
         {
-            return GetTypesInAssemblies(GetAssemblies()).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
+            name = name.Trim();
+
+            Assembly[] trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name != "UnityEditor").ToArray();
+            return GetTypesInAssemblies(trimmedAssemblies).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,81 +14,48 @@ namespace HierarchySearch
             window.Show();
         }
 
-        private readonly string[] m_Tabs = new string[] { "Basic", "Advanced" };
+        private Dictionary<string, AbstractWindowTab> m_Tabs;
+        private string[] m_TabNames;
         private int m_CurrentTab;
-        private HashSet<int> m_SearchResults;
 
-        //basic search
-        private string m_DefaultComponentName;
-        private string m_DefaultFieldName;
         public SearchWindow()
         {
             this.titleContent = new GUIContent("Search");
-            m_SearchResults = new HashSet<int>();
+            m_Tabs = new Dictionary<string, AbstractWindowTab>();
+            m_Tabs.Add("Search", new SearchTab());
+            m_Tabs.Add("Settings", new SettingsTab());
+            m_TabNames = m_Tabs.Keys.ToArray();
         }
 
         private void OnEnable()
         {
-            EditorApplication.hierarchyWindowItemOnGUI += HierarchyDrawItem;
+            foreach(var kvp in m_Tabs)
+            {
+                kvp.Value.OnEnable();
+            }
         }
 
         private void OnDisable()
         {
-            EditorApplication.hierarchyWindowItemOnGUI -= HierarchyDrawItem;
+            foreach (var kvp in m_Tabs)
+            {
+                kvp.Value.OnDisable();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            foreach (var kvp in m_Tabs)
+            {
+                kvp.Value.OnDestroy();
+            }
+            m_Tabs.Clear();
         }
 
         private void OnGUI()
         {
-            m_CurrentTab = GUILayout.Toolbar(m_CurrentTab, m_Tabs);
-            switch (m_CurrentTab)
-            {
-                default:
-                    DrawDefaultTab();
-                    break;
-                case 1:
-                    DrawAdvancedTab();
-                    break;
-            }
-        }
-
-        private void HierarchyDrawItem(int instanceId, Rect selectionRect)
-        {
-            if (m_SearchResults.Contains(instanceId))
-            {
-                EditorGUI.DrawRect(selectionRect, Color.green);
-            }
-        }
-
-        private void DrawDefaultTab()
-        {
-            EditorGUILayout.BeginVertical(GUI.skin.GetStyle("box"));
-            EditorGUILayout.LabelField("Component Name", EditorStyles.Header);
-            EditorGUILayout.BeginHorizontal();
-            m_DefaultComponentName = EditorGUILayout.TextField(m_DefaultComponentName);
-            if (GUILayout.Button("X", EditorStyles.SmallButtonWidth))
-            {
-                m_SearchResults.Clear();
-                m_DefaultComponentName = string.Empty;
-                GUI.FocusControl(null);
-                EditorApplication.RepaintHierarchyWindow();
-            }
-            else if (GUILayout.Button("Search", EditorStyles.MediumButtonWidth))
-            {
-                m_SearchResults.Clear();
-                Type result = ReflectionHelper.GetTypeByName(m_DefaultComponentName, false);
-                if (result != null)
-                {
-                    HierarchyHelper.GetGameObjectsWithType(result).ForEach(go => m_SearchResults.Add(go.GetInstanceID()));
-                }
-                EditorApplication.RepaintHierarchyWindow();
-            }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-        }
-
-        private void DrawAdvancedTab()
-        {
-            EditorGUILayout.LabelField("Advanced");
+            m_CurrentTab = GUILayout.Toolbar(m_CurrentTab, m_TabNames);
+            m_Tabs[m_TabNames[m_CurrentTab]].OnGUI();
         }
     }
 }

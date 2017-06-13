@@ -1,16 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Test : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		Debug.Log("YUP");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+public class Test : MonoBehaviour
+{
+    public string thingThang;
+    private string baBam;
+    public bool yoyo { get; private set; }
+    public bool asdasd;
+    public int aaa;
+    public Transform t;
 }
