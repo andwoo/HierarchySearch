@@ -1,6 +1,7 @@
 ﻿#define ENABLE_UNIT_TESTS
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,7 +13,7 @@ namespace HierarchySearch
 {
     public static class ReflectionHelper
     {
-        #if ENABLE_UNIT_TESTS
+#if ENABLE_UNIT_TESTS
         [MenuItem("HierarchySearch/List All Assemblies")]
         private static void OutputAllAssemblies()
         {
@@ -48,7 +49,14 @@ namespace HierarchySearch
             }
             Debug.Log(logOutput.ToString());
         }
-        #endif
+#endif
+
+        private static Dictionary<string, Type> RESERVED_TYPES = new Dictionary<string, Type>
+        {
+            { "short", typeof(Int16) },
+            { "int", typeof(Int32) },
+            { "bool", typeof(Boolean) }
+        };
 
         public static Assembly[] GetAssemblies()
         {
@@ -80,15 +88,14 @@ namespace HierarchySearch
                 BindingFlags.Public);
         }
 
-        //public static Type GetTypeByName(string name, bool caseSensitive)
-        //{
-        //    name = name.Trim();
-        //    return GetTypesInAssemblies(GetAssemblies()).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
-        //}
-
         public static Type GetTypeByName(string name, bool caseSensitive)
         {
             name = name.Trim();
+
+            if(RESERVED_TYPES.ContainsKey(name))
+            {
+                return RESERVED_TYPES[name];
+            }
 
             Assembly[] trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name != "UnityEditor").ToArray();
             return GetTypesInAssemblies(trimmedAssemblies).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());

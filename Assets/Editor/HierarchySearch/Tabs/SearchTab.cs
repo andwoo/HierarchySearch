@@ -180,19 +180,20 @@ namespace HierarchySearch
             EditorGUILayout.BeginHorizontal();
             searchTerm.term = EditorGUILayout.TextField(searchTerm.term);
 
-            if (EditorStyles.IconButton(clearIcon))
+            if (EditorStyles.IconButton(searchIcon))
+            {
+                gameObjectResult.Clear();
+                OnSearch(searchTerm, gameObjectResult);
+                EditorApplication.RepaintHierarchyWindow();
+            }
+            else if (EditorStyles.IconButton(clearIcon))
             {
                 gameObjectResult.Clear();
                 searchTerm.term = string.Empty;
                 GUI.FocusControl(null);
                 EditorApplication.RepaintHierarchyWindow();
             }
-            else if (EditorStyles.IconButton(searchIcon))
-            {
-                gameObjectResult.Clear();
-                OnSearch(searchTerm, gameObjectResult);
-                EditorApplication.RepaintHierarchyWindow();
-            }
+            
             EditorGUILayout.EndHorizontal();
             if (searchTerm.enableCaseSensitive)
             {
