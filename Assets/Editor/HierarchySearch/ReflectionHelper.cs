@@ -1,6 +1,4 @@
-﻿#define ENABLE_UNIT_TESTS
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +12,7 @@ namespace HierarchySearch
     public static class ReflectionHelper
     {
 #if ENABLE_UNIT_TESTS
-        [MenuItem("HierarchySearch/List All Assemblies")]
+        [MenuItem("HierarchySearch/List All Assemblies", false, 0)]
         private static void OutputAllAssemblies()
         {
             Assembly[] assemblies = GetAssemblies();
@@ -26,7 +24,7 @@ namespace HierarchySearch
             Debug.Log(logOutput.ToString());
         }
 
-        [MenuItem("HierarchySearch/List All Types")]
+        [MenuItem("HierarchySearch/List All Types", false, 0)]
         private static void OutputAllTypes()
         {
             Type[] allTypes = GetTypesInAssemblies(GetAssemblies());
@@ -38,7 +36,7 @@ namespace HierarchySearch
             Debug.Log(logOutput.ToString());
         }
 
-        [MenuItem("HierarchySearch/List All Field for Image")]
+        [MenuItem("HierarchySearch/List All Field for Image", false, 0)]
         private static void GetFieldsForType()
         {
             FieldInfo[] fields = GetFieldsForType(typeof(Image));
