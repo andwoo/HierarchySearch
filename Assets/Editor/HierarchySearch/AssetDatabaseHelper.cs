@@ -37,7 +37,7 @@ namespace HierarchySearch
 
         public static List<string> GetDependenciesForAssetPath(string path)
         {
-            return AssetDatabase.GetDependencies(path).ToList();
+            return AssetDatabase.GetDependencies(path, true).ToList();
         }
     }
 }

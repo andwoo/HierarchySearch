@@ -44,7 +44,7 @@ namespace HierarchySearch
                 {
                     continue;
                 }
-                FieldInfo[] fields = ReflectionHelper.GetFieldsForType(component.GetType());
+                List<FieldInfo> fields = ReflectionHelper.GetFieldsForType(component.GetType());
                 bool found = fields.FirstOrDefault(field =>
                 {
                     if(caseSensitive)
@@ -79,7 +79,7 @@ namespace HierarchySearch
                 {
                     continue;
                 }
-                FieldInfo[] fields = ReflectionHelper.GetFieldsForType(component.GetType());
+                List<FieldInfo> fields = ReflectionHelper.GetFieldsForType(component.GetType());
                 bool found = fields.FirstOrDefault(field => field.FieldType.Equals(fieldType)) != null;
                 if (found)
                 {
@@ -101,7 +101,7 @@ namespace HierarchySearch
                 {
                     continue;
                 }
-                PropertyInfo[] properties = ReflectionHelper.GetPropertiesForType(component.GetType());
+                List<PropertyInfo> properties = ReflectionHelper.GetPropertiesForType(component.GetType());
                 bool found = properties.FirstOrDefault(property =>
                 {
                     if(caseSensitive)
@@ -136,7 +136,7 @@ namespace HierarchySearch
                 {
                     continue;
                 }
-                PropertyInfo[] properties = ReflectionHelper.GetPropertiesForType(component.GetType());
+                List<PropertyInfo> properties = ReflectionHelper.GetPropertiesForType(component.GetType());
                 bool found = properties.FirstOrDefault(property => property.PropertyType.Equals(propertyType)) != null;
                 if (found)
                 {

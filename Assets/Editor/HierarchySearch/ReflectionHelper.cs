@@ -15,11 +15,11 @@ namespace HierarchySearch
         [MenuItem("HierarchySearch/List All Assemblies", false, 0)]
         private static void OutputAllAssemblies()
         {
-            Assembly[] assemblies = GetAssemblies();
+            List<Assembly> assemblies = GetAssemblies();
             StringBuilder logOutput = new StringBuilder();
-            for (int i = 0; i < assemblies.Length; ++i)
+            foreach (Assembly assembly in assemblies)
             {
-                logOutput.AppendLine(assemblies[i].GetName().Name);
+                logOutput.AppendLine(assembly.GetName().Name);
             }
             Debug.Log(logOutput.ToString());
         }
@@ -27,11 +27,11 @@ namespace HierarchySearch
         [MenuItem("HierarchySearch/List All Types", false, 0)]
         private static void OutputAllTypes()
         {
-            Type[] allTypes = GetTypesInAssemblies(GetAssemblies());
+            List<Type> allTypes = GetTypesInAssemblies(GetAssemblies());
             StringBuilder logOutput = new StringBuilder();
-            for (int i = 0; i < allTypes.Length; ++i)
+            foreach (Type type in allTypes)
             {
-                logOutput.AppendLine(allTypes[i].Namespace + "." + allTypes[i].Name);
+                logOutput.AppendLine(type.Namespace + "." + type.Name);
             }
             Debug.Log(logOutput.ToString());
         }
@@ -39,11 +39,11 @@ namespace HierarchySearch
         [MenuItem("HierarchySearch/List All Field for Image", false, 0)]
         private static void GetFieldsForType()
         {
-            FieldInfo[] fields = GetFieldsForType(typeof(Image));
+            List<FieldInfo> fields = GetFieldsForType(typeof(Image));
             StringBuilder logOutput = new StringBuilder();
-            for (int i = 0; i < fields.Length; ++i)
+            foreach (FieldInfo field in fields)
             {
-                logOutput.AppendLine(fields[i].Name);
+                logOutput.AppendLine(field.Name);
             }
             Debug.Log(logOutput.ToString());
         }
@@ -51,39 +51,48 @@ namespace HierarchySearch
 
         private static Dictionary<string, Type> RESERVED_TYPES = new Dictionary<string, Type>
         {
-            { "short", typeof(Int16) },
-            { "int", typeof(Int32) },
-            { "bool", typeof(Boolean) }
+            { "short", typeof(short) },
+            { "int", typeof(int) },
+            { "long", typeof(long) },
+            
+            { "ushort", typeof(ushort) },
+            { "uint", typeof(uint) },
+            { "ulong", typeof(ulong) },
+            
+            { "float", typeof(float) },
+            { "double", typeof(double) },
+            
+            { "bool", typeof(bool) }
         };
 
-        public static Assembly[] GetAssemblies()
+        public static List<Assembly> GetAssemblies()
         {
-            return AppDomain.CurrentDomain.GetAssemblies();
+            return AppDomain.CurrentDomain.GetAssemblies().ToList();
         }
 
-        public static Type[] GetTypesInAssemblies(params Assembly[] assemblies)
+        public static List<Type> GetTypesInAssemblies(List<Assembly> assemblies)
         {
-            return assemblies.SelectMany(assembly => assembly.GetTypes()).ToArray();
+            return assemblies.SelectMany(assembly => assembly.GetTypes()).ToList();
         }
 
-        public static FieldInfo[] GetFieldsForType(Type type)
+        public static List<FieldInfo> GetFieldsForType(Type type)
         {
             return type.GetFields(
                 BindingFlags.Instance |
                 BindingFlags.Static |
                 BindingFlags.FlattenHierarchy |
                 BindingFlags.NonPublic |
-                BindingFlags.Public);
+                BindingFlags.Public).ToList();
         }
 
-        public static PropertyInfo[] GetPropertiesForType(Type type)
+        public static List<PropertyInfo> GetPropertiesForType(Type type)
         {
             return type.GetProperties(
                 BindingFlags.Instance |
                 BindingFlags.Static |
                 BindingFlags.FlattenHierarchy |
                 BindingFlags.NonPublic |
-                BindingFlags.Public);
+                BindingFlags.Public).ToList();
         }
 
         public static Type GetTypeByName(string name, bool caseSensitive)
@@ -95,7 +104,7 @@ namespace HierarchySearch
                 return RESERVED_TYPES[name];
             }
 
-            Assembly[] trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name != "UnityEditor").ToArray();
+            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name != "UnityEditor").ToList();
             return GetTypesInAssemblies(trimmedAssemblies).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
         }
     }
