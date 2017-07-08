@@ -11,7 +11,7 @@ namespace HierarchySearch
     public static class AssetDatabaseHelper
     {
         private const string PREFAB_EXTENSION = ".prefab";
-#if ENABLE_UNIT_TESTS
+#if SEARCH_UNIT_TESTS
         [MenuItem("HierarchySearch/List All Prefabs", false, 100)]
         private static void OutputAllAssemblies()
         {
@@ -29,7 +29,7 @@ namespace HierarchySearch
             Debug.Log(output);
         }
 #endif
-        
+
         public static List<string> GetAllPrefabPaths()
         {
             return AssetDatabase.GetAllAssetPaths().Where(path => Path.GetExtension(path) == PREFAB_EXTENSION).ToList();

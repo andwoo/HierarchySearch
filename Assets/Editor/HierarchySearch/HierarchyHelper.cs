@@ -21,15 +21,19 @@ namespace HierarchySearch
 
         public static List<GameObject> GetGameObjectsWithType(Type type)
         {
-            UnityEngine.Object[] objects = GameObject.FindObjectsOfType(type);
-            if(objects != null && objects.Length > 0)
+            List<GameObject> results = new List<GameObject>();
+            if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
-                return objects
-                    .Where(component => component is Component)
-                    .Select(component => (component as Component).gameObject)
-                    .ToList();
+                UnityEngine.Object[] objects = GameObject.FindObjectsOfType(type);
+                if (objects != null && objects.Length > 0)
+                {
+                    results = objects
+                        .Where(component => component is Component)
+                        .Select(component => (component as Component).gameObject)
+                        .ToList();
+                }
             }
-            return null;
+            return results;
         }
 
         public static List<GameObject> GetGameObjectsWithFieldName(string fieldName, bool caseSensitive)

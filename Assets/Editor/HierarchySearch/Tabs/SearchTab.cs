@@ -183,7 +183,10 @@ namespace HierarchySearch
             if (EditorStyles.IconButton(searchIcon))
             {
                 gameObjectResult.Clear();
-                OnSearch(searchTerm, gameObjectResult);
+                if(!string.IsNullOrEmpty(searchTerm.term))
+                {
+                    OnSearch(searchTerm, gameObjectResult);
+                }
                 EditorApplication.RepaintHierarchyWindow();
             }
             else if (EditorStyles.IconButton(clearIcon))

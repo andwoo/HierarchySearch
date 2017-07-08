@@ -11,7 +11,7 @@ namespace HierarchySearch
 {
     public static class ReflectionHelper
     {
-#if ENABLE_UNIT_TESTS
+#if SEARCH_UNIT_TESTS
         [MenuItem("HierarchySearch/List All Assemblies", false, 0)]
         private static void OutputAllAssemblies()
         {
@@ -104,7 +104,28 @@ namespace HierarchySearch
                 return RESERVED_TYPES[name];
             }
 
-            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name != "UnityEditor").ToList();
+            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name.ToLower().Contains("unityeditor") == false).ToList();
+            //prioritize unity assemblies first
+            trimmedAssemblies.Sort((as1, as2) => 
+            {
+                string as1Name = as1.GetName().Name.ToLower();
+                string as2Name = as2.GetName().Name.ToLower();
+                bool as1ContainsUnity = as1Name.Contains("unityengine");
+                bool as2ContainsUnity = as2Name.Contains("unityengine");
+                if (as1ContainsUnity != as2ContainsUnity)
+                {
+                    if(as1ContainsUnity)
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+                return as1Name.CompareTo(as2Name);
+            });
+
             return GetTypesInAssemblies(trimmedAssemblies).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
         }
     }
