@@ -29,7 +29,7 @@ namespace HierarchySearch
         public static Color Black;
         #endregion
 
-        static EditorStyles()
+        public static void Initialize()
         {
             ColorUtility.TryParseHtmlString("#f44336", out Red);
             ColorUtility.TryParseHtmlString("#e91e63", out Pink);
@@ -52,7 +52,15 @@ namespace HierarchySearch
             ColorUtility.TryParseHtmlString("#607d8b", out BlueGrey);
             ColorUtility.TryParseHtmlString("#ffffff", out White);
             ColorUtility.TryParseHtmlString("#000000", out Black);
-    }
+        }
+
+        public static void Reset()
+        {
+            m_SmallButtonWidth = null;
+            m_MediumButtonWidth = null;
+            m_Header = null;
+            m_SearchResult = null;
+        }
 
         public static bool IconButton(Texture2D icon)
         {
@@ -125,7 +133,7 @@ namespace HierarchySearch
                 {
                     m_SearchResult = new GUIStyle(GUI.skin.label);
                     m_SearchResult.fontStyle = FontStyle.Bold;
-                    m_SearchResult.normal.textColor = Yellow;
+                    m_SearchResult.normal.textColor = HierarchySearchSettings.Instance.searchResultText;
                 }
                 return m_SearchResult;
             }

@@ -104,7 +104,7 @@ namespace HierarchySearch
             if (m_SearchResults.Contains(instanceId))
             {
                 GameObject go = (GameObject)EditorUtility.InstanceIDToObject(instanceId);
-                EditorGUI.DrawRect(selectionRect, EditorStyles.Orange);
+                EditorGUI.DrawRect(selectionRect, HierarchySearchSettings.Instance.searchResultBackground);
                 EditorGUI.LabelField(selectionRect, go.name, EditorStyles.SearchResult);
 
                 Rect iconRect = selectionRect;

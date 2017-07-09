@@ -29,6 +29,7 @@ namespace HierarchySearch
 
         private void OnEnable()
         {
+            EditorStyles.Initialize();
             foreach(var kvp in m_Tabs)
             {
                 kvp.Value.OnEnable();
