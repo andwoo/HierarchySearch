@@ -36,8 +36,13 @@ namespace HierarchySearch
 
         private void Save()
         {
+            HierarchySearchSettings.Instance.searchResultBackground = searchResultBackground;
+            HierarchySearchSettings.Instance.searchResultText = searchResultText;
+            
             HierarchySearchSettings.Instance.Save();
             EditorStyles.Reset();
+
+            EditorApplication.RepaintHierarchyWindow();
         }
     }
 }
