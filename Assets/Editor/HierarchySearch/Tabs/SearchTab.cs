@@ -20,6 +20,10 @@ namespace HierarchySearch
 
     public class SearchTab : AbstractWindowTab
     {
+        private const string ICON_SEARCH = "ic_search";
+        private const string ICON_CLOSE = "ic_close";
+        private const string ICON_NOTIFICATION = "ic_priority_high";
+
         private HashSet<int> m_SearchResults;
         //component searching
         private bool m_ComponentFoldOut;
@@ -58,9 +62,10 @@ namespace HierarchySearch
 
         public override void OnEnable()
         {
-            m_SearchIcon = Resources.Load<Texture2D>("ic_search");
-            m_FoundIcon = Resources.Load<Texture2D>("ic_priority_high");
-            m_ClearIcon = Resources.Load<Texture2D>("ic_close");
+            string themeFolder = EditorGUIUtility.isProSkin ? "ProTheme" : "DefaultTheme";
+            m_SearchIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, ICON_SEARCH));
+            m_ClearIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, ICON_CLOSE));
+            m_FoundIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, ICON_NOTIFICATION));
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyDrawItem;
         }
 
