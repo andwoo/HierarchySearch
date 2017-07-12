@@ -22,7 +22,8 @@ namespace HierarchySearch
         {
             this.titleContent = new GUIContent("Search");
             m_Tabs = new Dictionary<string, AbstractWindowTab>();
-            m_Tabs.Add("Search", new SearchTab());
+            m_Tabs.Add("Hierarchy", new SearchTab());
+            m_Tabs.Add("Prefab", new PrefabTab());
             m_Tabs.Add("Settings", new SettingsTab());
             m_TabNames = m_Tabs.Keys.ToArray();
         }
