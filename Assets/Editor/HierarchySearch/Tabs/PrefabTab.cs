@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,9 +30,17 @@ namespace HierarchySearch
             m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
             foreach(string prefabPath in m_Prefabs)
             {
-                EditorGUILayout.LabelField(prefabPath);
+                DrawPrefabUI(prefabPath);
             }
             EditorGUILayout.EndScrollView();
+        }
+
+        private void DrawPrefabUI(string prefabPath)
+        {
+            if (GUILayout.Button(Path.GetFileNameWithoutExtension(prefabPath)))
+            {
+                EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<Object>(prefabPath));
+            }
         }
     }
 }

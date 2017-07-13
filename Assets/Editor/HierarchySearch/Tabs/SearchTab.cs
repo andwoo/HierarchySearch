@@ -11,19 +11,10 @@ namespace HierarchySearch
         public MessageType type;
     }
 
-    internal enum SearchType
-    {
-        Component,
-        FieldName,
-        FieldType,
-        PropertyName,
-        PropertyType
-    }
-
+    delegate void SearchHandler(string searchTerm, bool caseSensitive, HashSet<int> searchResults);
+    
     public class SearchTab : AbstractWindowTab
     {
-        private delegate void SearchHandler(string searchTerm, bool caseSensitive, HashSet<int> searchResults);
-
         private const string ICON_SEARCH = "ic_search";
         private const string ICON_CLOSE = "ic_close";
         private const string ICON_NOTIFICATION = "ic_priority_high";
@@ -65,9 +56,9 @@ namespace HierarchySearch
         public override void OnEnable()
         {
             string themeFolder = EditorGUIUtility.isProSkin ? "ProTheme" : "DefaultTheme";
-            m_SearchIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, ICON_SEARCH));
-            m_ClearIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, ICON_CLOSE));
-            m_FoundIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, ICON_NOTIFICATION));
+            m_SearchIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, SearchConstants.ICON_SEARCH));
+            m_ClearIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, SearchConstants.ICON_CLOSE));
+            m_FoundIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, SearchConstants.ICON_NOTIFICATION));
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyHighlightItem;
         }
 
@@ -88,7 +79,8 @@ namespace HierarchySearch
                 m_SearchType = (SearchType)EditorGUILayout.EnumPopup(m_SearchType, GUILayout.Width(100f));
                 m_SearchTerm = EditorGUILayout.TextField(m_SearchTerm);
 
-                if (EditorStyles.IconButton(m_SearchIcon))
+                bool isReturnPressed = Event.current.type == EventType.keyDown && Event.current.keyCode == KeyCode.Return;
+                if (EditorStyles.IconButton(m_SearchIcon) || isReturnPressed)
                 {
                     m_SearchResults.Clear();
                     if(string.IsNullOrEmpty(m_SearchTerm))
