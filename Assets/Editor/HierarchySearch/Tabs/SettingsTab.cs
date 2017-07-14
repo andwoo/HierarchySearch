@@ -4,26 +4,26 @@ using UnityEngine;
 
 namespace HierarchySearch
 {
-    public class SettingsTab : AbstractWindowTab
+    public class SettingsTab : IWindowTab
     {
         private Color searchResultBackground = EditorStyles.Orange;
         private Color searchResultText = EditorStyles.Yellow;
 
-        public override void OnDestroy()
+        public void OnDestroy()
         {
         }
 
-        public override void OnDisable()
+        public void OnDisable()
         {
         }
 
-        public override void OnEnable()
+        public void OnEnable()
         {
             searchResultBackground = HierarchySearchSettings.Instance.searchResultBackground;
             searchResultText = HierarchySearchSettings.Instance.searchResultText;
         }
 
-        public override void OnGUI()
+        public void OnGUI()
         {
             searchResultBackground = EditorGUILayout.ColorField("Background Color", searchResultBackground);
             searchResultText = EditorGUILayout.ColorField("Text Color", searchResultText);

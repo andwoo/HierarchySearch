@@ -13,30 +13,19 @@ namespace HierarchySearch
 
     delegate void SearchHandler(string searchTerm, bool caseSensitive, HashSet<int> searchResults);
     
-    public class SearchTab : AbstractWindowTab
+    public class SearchTab : IWindowTab
     {
-        private const string ICON_SEARCH = "ic_search";
-        private const string ICON_CLOSE = "ic_close";
-        private const string ICON_NOTIFICATION = "ic_priority_high";
-
         private Dictionary<SearchType, SearchHandler> m_SearchHandlers;
-
         private HashSet<int> m_SearchResults;
+        private SearchWidget m_SearchWidget;
         private SearchHelpBoxPrompt m_SearchPrompt;
-        private SearchType m_SearchType;
-        private string m_SearchTerm;
-        private bool m_CaseSensitive;
-
-        private Vector2 m_ScrollPosition;
-        private Texture2D m_SearchIcon;
         private Texture2D m_FoundIcon;
-        private Texture2D m_ClearIcon;
+        private Vector2 m_ScrollPosition;
 
         public SearchTab()
         {
             m_SearchResults = new HashSet<int>();
             m_SearchPrompt = new SearchHelpBoxPrompt();
-            m_SearchType = SearchType.Component;
 
             m_SearchHandlers = new Dictionary<SearchType, SearchHandler>();
             m_SearchHandlers.Add(SearchType.Component, SearchComponentType);
@@ -46,80 +35,64 @@ namespace HierarchySearch
             m_SearchHandlers.Add(SearchType.PropertyType, SearchPropertyType);
         }
 
-        public override void OnDestroy()
+        public void OnDestroy()
         {
-            m_SearchIcon = null;
             m_FoundIcon = null;
-            m_ClearIcon = null;
+            m_SearchWidget.OnDestroy();
+            m_SearchWidget = null;
         }
 
-        public override void OnEnable()
+        public void OnEnable()
         {
-            string themeFolder = EditorGUIUtility.isProSkin ? "ProTheme" : "DefaultTheme";
-            m_SearchIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, SearchConstants.ICON_SEARCH));
-            m_ClearIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, SearchConstants.ICON_CLOSE));
-            m_FoundIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", themeFolder, SearchConstants.ICON_NOTIFICATION));
+            m_FoundIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, SearchConstants.ICON_NOTIFICATION));
+            m_SearchWidget = new SearchWidget(SearchType.Component, OnSearch, OnClear);
+
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyHighlightItem;
         }
 
-        public override void OnDisable()
+        public void OnDisable()
         {
             EditorApplication.hierarchyWindowItemOnGUI -= HierarchyHighlightItem;
-            m_SearchIcon = null;
-            m_FoundIcon = null;
-            m_ClearIcon = null;
         }
 
-        public override void OnGUI()
+        public void OnGUI()
         {
             m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
-
-            EditorGUILayout.BeginHorizontal();
-            {
-                m_SearchType = (SearchType)EditorGUILayout.EnumPopup(m_SearchType, GUILayout.Width(100f));
-                m_SearchTerm = EditorGUILayout.TextField(m_SearchTerm);
-
-                bool isReturnPressed = Event.current.type == EventType.keyDown && Event.current.keyCode == KeyCode.Return;
-                if (EditorStyles.IconButton(m_SearchIcon) || isReturnPressed)
-                {
-                    m_SearchResults.Clear();
-                    if(string.IsNullOrEmpty(m_SearchTerm))
-                    {
-                        m_SearchPrompt.message = "Search term cannot be empty.";
-                        m_SearchPrompt.type = MessageType.Error;
-                    }
-                    else
-                    {
-                        m_SearchHandlers[m_SearchType](m_SearchTerm, m_CaseSensitive, m_SearchResults);
-                        if (m_SearchResults.Count == 0)
-                        {
-                            m_SearchPrompt.message = string.Format("Could not find match for \"{0}\"", m_SearchTerm);
-                            m_SearchPrompt.type = MessageType.Info;
-                        }
-                        else
-                        {
-                            m_SearchPrompt.message = string.Empty;
-                        }
-                    }
-                }
-                else if (EditorStyles.IconButton(m_ClearIcon))
-                {
-                    m_SearchResults.Clear();
-                    m_SearchTerm = string.Empty;
-                    m_SearchPrompt.message = string.Empty;
-                    GUI.FocusControl(null);
-                    EditorApplication.RepaintHierarchyWindow();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-            m_CaseSensitive = EditorGUILayout.Toggle("Match case", m_CaseSensitive);
-
+            m_SearchWidget.OnGUI();
             EditorGUILayout.EndScrollView();
 
             if(!string.IsNullOrEmpty(m_SearchPrompt.message))
             {
                 EditorGUILayout.HelpBox(m_SearchPrompt.message, m_SearchPrompt.type);
             }
+        }
+
+        private void OnSearch(SearchType type, string term)
+        {
+            m_SearchResults.Clear();
+            if(string.IsNullOrEmpty(term))
+            {
+                m_SearchPrompt.message = "Search term cannot be empty.";
+                m_SearchPrompt.type = MessageType.Error;
+                return;
+            }
+
+            m_SearchHandlers[type](term, m_SearchWidget.CaseSensitive, m_SearchResults);
+            if (m_SearchResults.Count == 0)
+            {
+                m_SearchPrompt.message = string.Format("Could not find match for \"{0}\"", term);
+                m_SearchPrompt.type = MessageType.Info;
+            }
+            else
+            {
+                m_SearchPrompt.message = string.Empty;
+            }
+        }
+
+        private void OnClear()
+        {
+            m_SearchResults.Clear();
+            m_SearchPrompt.message = string.Empty;
         }
 
         private void HierarchyHighlightItem(int instanceId, Rect selectionRect)

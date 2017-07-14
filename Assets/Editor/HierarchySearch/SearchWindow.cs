@@ -14,14 +14,14 @@ namespace HierarchySearch
             window.Show();
         }
 
-        private Dictionary<string, AbstractWindowTab> m_Tabs;
+        private Dictionary<string, IWindowTab> m_Tabs;
         private string[] m_TabNames;
         private int m_CurrentTab;
 
         public SearchWindow()
         {
             this.titleContent = new GUIContent("Search");
-            m_Tabs = new Dictionary<string, AbstractWindowTab>();
+            m_Tabs = new Dictionary<string, IWindowTab>();
             m_Tabs.Add("Hierarchy", new SearchTab());
             m_Tabs.Add("Prefab", new PrefabTab());
             m_Tabs.Add("Settings", new SettingsTab());

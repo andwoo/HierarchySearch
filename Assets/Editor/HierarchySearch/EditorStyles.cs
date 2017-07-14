@@ -62,6 +62,14 @@ namespace HierarchySearch
             m_SearchResult = null;
         }
 
+        public static string ThemeFolder
+        {
+            get
+            {
+                return EditorGUIUtility.isProSkin ? "ProTheme" : "DefaultTheme";
+            }
+        }
+
         public static bool IconButton(Texture2D icon)
         {
             return GUILayout.Button(icon, GUILayout.Width(30f), GUILayout.Height(18));
