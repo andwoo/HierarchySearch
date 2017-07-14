@@ -20,7 +20,6 @@ namespace HierarchySearch
 
         public SearchWindow()
         {
-            this.titleContent = new GUIContent("Search");
             m_Tabs = new Dictionary<string, IWindowTab>();
             m_Tabs.Add("Hierarchy", new SearchTab());
             m_Tabs.Add("Prefab", new PrefabTab());
@@ -31,7 +30,11 @@ namespace HierarchySearch
         private void OnEnable()
         {
             EditorStyles.Initialize();
-            foreach(var kvp in m_Tabs)
+
+            Texture2D windowIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, SearchConstants.ICON_LOGO));
+            this.titleContent = new GUIContent("Search", windowIcon);
+
+            foreach (var kvp in m_Tabs)
             {
                 kvp.Value.OnEnable();
             }

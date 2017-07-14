@@ -6,6 +6,7 @@ namespace HierarchySearch
 {
     public class SettingsTab : IWindowTab
     {
+        private Texture2D m_Banner;
         private Color searchResultBackground = EditorStyles.Orange;
         private Color searchResultText = EditorStyles.Yellow;
 
@@ -19,6 +20,7 @@ namespace HierarchySearch
 
         public void OnEnable()
         {
+            m_Banner = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, SearchConstants.BANNER_LOGO));
             searchResultBackground = HierarchySearchSettings.Instance.searchResultBackground;
             searchResultText = HierarchySearchSettings.Instance.searchResultText;
         }
@@ -32,6 +34,8 @@ namespace HierarchySearch
             {
                 Save();
             }
+
+            GUILayout.Label(m_Banner);
         }
 
         private void Save()
