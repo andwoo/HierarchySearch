@@ -6,7 +6,7 @@ namespace HierarchySearch
     public class HierarchySearchSettings : ScriptableObject
     {
 #region ScriptableObject Saving
-        private const string SETTINGS_LOCATION = "Assets/Editor/HierarchySearch/ScriptableObjects/HierarchySearchSettings.asset";
+        private const string SETTINGS_LOCATION = "Assets/HierarchySearch/Editor/ScriptableObjects/HierarchySearchSettings.asset";
         private static HierarchySearchSettings m_Instance;
         public static HierarchySearchSettings Instance
         {

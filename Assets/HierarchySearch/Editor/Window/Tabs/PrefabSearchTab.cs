@@ -46,12 +46,15 @@ namespace HierarchySearch
         {
             m_SearchWidget.OnGUI();
 
-            m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);//, GUI.skin.box);
-            foreach(string prefabPath in m_SearchResults)
+            if (m_SearchResults.Count > 0)
             {
-                DrawPrefabUI(prefabPath);
+                m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);//, GUI.skin.box);
+                foreach (string prefabPath in m_SearchResults)
+                {
+                    DrawPrefabUI(prefabPath);
+                }
+                EditorGUILayout.EndScrollView();
             }
-            EditorGUILayout.EndScrollView();
 
             if (!string.IsNullOrEmpty(m_SearchPrompt.message))
             {
@@ -106,7 +109,6 @@ namespace HierarchySearch
                 List<string> scriptPaths = AssetDatabaseHelper.GetScriptPathDependenciesForAssetPath(prefabPath);
                 foreach (string scriptPath in scriptPaths)
                 {
-                    Debug.Log(scriptPath);
                     bool found = caseSensitive ? searchTerm == Path.GetFileNameWithoutExtension(scriptPath) : searchTerm.ToLowerInvariant() == Path.GetFileNameWithoutExtension(scriptPath).ToLowerInvariant();
                     if (found)
                     {
