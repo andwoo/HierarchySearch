@@ -11,5 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab612088a1333d46b519909fba00fe7, type: 3}
   m_Name: HierarchySearchSettings
   m_EditorClassIdentifier: 
-  searchResultBackground: {r: 0.75735295, g: 0, b: 0.6424441, a: 1}
-  searchResultText: {r: 0, g: 0, b: 0, a: 1}
+  searchResultBackground: {r: 1, g: 0.59607846, b: 0, a: 1}
+  searchResultText: {r: 1, g: 0.92156863, b: 0.23137255, a: 1}

@@ -7,6 +7,7 @@ namespace HierarchySearch
     public class SettingsTab : IWindowTab
     {
         private const float BANNER_HEIGHT = 80f;
+        private const string VERSION = "1.0.0";
 
         private Texture2D m_Banner;
         private Color searchResultBackground = EditorStyles.Orange;
@@ -37,6 +38,8 @@ namespace HierarchySearch
                 Save();
             }
 
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Version: " + VERSION);
             GUILayout.Label(m_Banner, GUILayout.Height(BANNER_HEIGHT));
         }
 

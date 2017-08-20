@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -48,7 +47,7 @@ namespace HierarchySearch
 
             if (m_SearchResults.Count > 0)
             {
-                m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);//, GUI.skin.box);
+                m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);;
                 foreach (string prefabPath in m_SearchResults)
                 {
                     DrawPrefabUI(prefabPath);
@@ -104,7 +103,7 @@ namespace HierarchySearch
         private static void SearchComponentType(string searchTerm, bool caseSensitive, HashSet<string> searchResults)
         {
             List<string> prefabPaths = AssetDatabaseHelper.GetAllPrefabPaths();
-            foreach(string prefabPath in prefabPaths)
+            foreach (string prefabPath in prefabPaths)
             {
                 List<string> scriptPaths = AssetDatabaseHelper.GetScriptPathDependenciesForAssetPath(prefabPath);
                 foreach (string scriptPath in scriptPaths)
@@ -113,6 +112,7 @@ namespace HierarchySearch
                     if (found)
                     {
                         searchResults.Add(prefabPath);
+                        break;
                     }
                 }
             }
