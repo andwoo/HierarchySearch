@@ -69,7 +69,8 @@ namespace HierarchySearch
         private void OnSearch(HierarchySearchType type, string term)
         {
             m_SearchResults.Clear();
-            if(string.IsNullOrEmpty(term))
+            EditorApplication.RepaintHierarchyWindow();
+            if (string.IsNullOrEmpty(term))
             {
                 m_SearchPrompt.message = "Search term cannot be empty.";
                 m_SearchPrompt.type = MessageType.Error;
@@ -79,6 +80,7 @@ namespace HierarchySearch
             m_SearchHandlers[type](term, m_SearchWidget.CaseSensitive, m_SearchResults);
             if (m_SearchResults.Count == 0)
             {
+                //repaint hierarchy
                 m_SearchPrompt.message = string.Format("Could not find match for \"{0}\"", term);
                 m_SearchPrompt.type = MessageType.Info;
             }
@@ -112,10 +114,10 @@ namespace HierarchySearch
 #region Search Methods
         private static void SearchComponentType(string searchTerm, bool caseSensitive, HashSet<int> searchResults)
         {
-            Type result = ReflectionHelper.GetTypeByName(searchTerm, caseSensitive);
-            if (result != null)
+            List<Type> results = ReflectionHelper.GetTypesByName(searchTerm, caseSensitive);
+            if (results != null)
             {
-                HierarchyHelper.GetGameObjectsWithType(result).ForEach(
+                HierarchyHelper.GetGameObjectsWithTypes(results).ForEach(
                 go => {
                     int instanceId = go.GetInstanceID();
                     searchResults.Add(instanceId);

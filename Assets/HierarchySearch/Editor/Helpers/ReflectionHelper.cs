@@ -2,15 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace HierarchySearch
 {
     public static class ReflectionHelper
     {
+        private static HashSet<string> m_IgnoredAssemblies = new HashSet<string>()
+        {
+            "Boo.Lang.Parser",
+            "Boo.Lang.Compiler",
+            "UnityEditor.iOS.Extensions.Common",
+            "UnityEditor.iOS.Extensions.Xcode",
+            "UnityEditor.WindowsStandalone.Extensions",
+            "UnityEditor.iOS.Extensions",
+            "UnityEditor.Android.Extensions",
+            "UnityEditor.Graphs",
+            "UnityEditor.VR",
+            "UnityEditor.Purchasing",
+            "UnityEditor.HoloLens",
+            "UnityEditor.Analytics",
+            "UnityEditor.TreeEditor",
+            "UnityEditor.Timeline",
+            "nunit.framework",
+            "UnityEditor.TestRunner",
+            "UnityEditor.Networking",
+            "UnityEditor.UI",
+            "UnityEditor.Advertisements",
+            "Unity.PackageManager",
+            "I18N.West",
+            "I18N"
+        };
+
         private static Dictionary<string, Type> RESERVED_TYPES = new Dictionary<string, Type>
         {
             { "short", typeof(short) },
@@ -54,38 +77,17 @@ namespace HierarchySearch
                 BindingFlags.Public).ToList();
         }
 
-        public static Type GetTypeByName(string name, bool caseSensitive)
+        public static List<Type> GetTypesByName(string name, bool caseSensitive)
         {
             name = name.Trim();
 
-            if(RESERVED_TYPES.ContainsKey(name))
+            if (RESERVED_TYPES.ContainsKey(name))
             {
-                return RESERVED_TYPES[name];
+                return new List<Type>() { RESERVED_TYPES[name] };
             }
 
-            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => assembly.GetName().Name.ToLower().Contains("unityeditor") == false).ToList();
-            //prioritize unity assemblies first
-            trimmedAssemblies.Sort((as1, as2) => 
-            {
-                string as1Name = as1.GetName().Name.ToLower();
-                string as2Name = as2.GetName().Name.ToLower();
-                bool as1ContainsUnity = as1Name.Contains("unityengine");
-                bool as2ContainsUnity = as2Name.Contains("unityengine");
-                if (as1ContainsUnity != as2ContainsUnity)
-                {
-                    if(as1ContainsUnity)
-                    {
-                        return -1;
-                    }
-                    else
-                    {
-                        return 1;
-                    }
-                }
-                return as1Name.CompareTo(as2Name);
-            });
-
-            return GetTypesInAssemblies(trimmedAssemblies).FirstOrDefault(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant());
+            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => !m_IgnoredAssemblies.Contains(assembly.GetName().Name)).ToList();
+            return GetTypesInAssemblies(trimmedAssemblies).Where(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant()).ToList();
         }
     }
 }

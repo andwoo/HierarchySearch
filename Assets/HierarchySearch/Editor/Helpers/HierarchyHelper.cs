@@ -36,6 +36,16 @@ namespace HierarchySearch
             return results;
         }
 
+        public static List<GameObject> GetGameObjectsWithTypes(List<Type> types)
+        {
+            List<GameObject> results = new List<GameObject>();
+            foreach(Type type in types)
+            {
+                results.AddRange(GetGameObjectsWithType(type));
+            }
+            return results;
+        }
+
         public static List<GameObject> GetGameObjectsWithFieldName(string fieldName, bool caseSensitive)
         {
             fieldName = fieldName.Trim();
@@ -70,10 +80,10 @@ namespace HierarchySearch
 
         public static List<GameObject> GetGameObjectsWithFieldType(string fieldType, bool caseSensitive)
         {
-            return GetGameObjectsWithFieldType(ReflectionHelper.GetTypeByName(fieldType, caseSensitive));
+            return GetGameObjectsWithFieldTypes(ReflectionHelper.GetTypesByName(fieldType, caseSensitive));
         }
 
-        public static List<GameObject> GetGameObjectsWithFieldType(Type fieldType)
+        public static List<GameObject> GetGameObjectsWithFieldTypes(List<Type> fieldTypes)
         {
             List<GameObject> results = new List<GameObject>();
             Component[] allComponents = GameObject.FindObjectsOfType<Component>();
@@ -84,7 +94,7 @@ namespace HierarchySearch
                     continue;
                 }
                 List<FieldInfo> fields = ReflectionHelper.GetFieldsForType(component.GetType());
-                bool found = fields.FirstOrDefault(field => field.FieldType.Equals(fieldType)) != null;
+                bool found = fields.FirstOrDefault(field => fieldTypes.Contains(field.FieldType)) != null;
                 if (found)
                 {
                     results.Add(component.gameObject);
@@ -128,10 +138,10 @@ namespace HierarchySearch
 
         public static List<GameObject> GetGameObjectsWithPropertyType(string propertyType, bool caseSensitive)
         {
-            return GetGameObjectsWithPropertyType(ReflectionHelper.GetTypeByName(propertyType, caseSensitive));
+            return GetGameObjectsWithPropertyTypes(ReflectionHelper.GetTypesByName(propertyType, caseSensitive));
         }
 
-        public static List<GameObject> GetGameObjectsWithPropertyType(Type propertyType)
+        public static List<GameObject> GetGameObjectsWithPropertyTypes(List<Type> propertyTypes)
         {
             List<GameObject> results = new List<GameObject>();
             Component[] allComponents = GameObject.FindObjectsOfType<Component>();
@@ -142,7 +152,7 @@ namespace HierarchySearch
                     continue;
                 }
                 List<PropertyInfo> properties = ReflectionHelper.GetPropertiesForType(component.GetType());
-                bool found = properties.FirstOrDefault(property => property.PropertyType.Equals(propertyType)) != null;
+                bool found = properties.FirstOrDefault(property => propertyTypes.Contains(property.PropertyType)) != null;
                 if (found)
                 {
                     results.Add(component.gameObject);

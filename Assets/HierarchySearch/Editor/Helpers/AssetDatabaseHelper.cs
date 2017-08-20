@@ -34,7 +34,7 @@ namespace HierarchySearch
         public static List<Type> GetScriptDependenciesForAssetPath(string path)
         {
             return GetDependenciesForAssetPath(path, SCRIPT_EXTENSION)
-                .Select(dep => ReflectionHelper.GetTypeByName(Path.GetFileNameWithoutExtension(dep), true))
+                .Select(dep => ReflectionHelper.GetTypesByName(Path.GetFileNameWithoutExtension(dep), true).FirstOrDefault())
                 .ToList();
         }
 
