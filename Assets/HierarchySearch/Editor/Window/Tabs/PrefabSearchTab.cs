@@ -59,6 +59,11 @@ namespace HierarchySearch
             {
                 EditorGUILayout.HelpBox(m_SearchPrompt.message, m_SearchPrompt.type);
             }
+
+            if (Event.current.type == EventType.keyUp && Event.current.keyCode == KeyCode.Escape)
+            {
+                OnClear();
+            }
         }
 
         private void OnSearch(PrefabSearchType type, string term)

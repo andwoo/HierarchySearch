@@ -8,7 +8,7 @@ namespace HierarchySearch
 {
     public static class ReflectionHelper
     {
-        private static HashSet<string> m_IgnoredAssemblies = new HashSet<string>()
+        private static HashSet<string> IGNORED_ASSEMBLIES = new HashSet<string>()
         {
             "Boo.Lang.Parser",
             "Boo.Lang.Compiler",
@@ -86,7 +86,7 @@ namespace HierarchySearch
                 return new List<Type>() { RESERVED_TYPES[name] };
             }
 
-            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => !m_IgnoredAssemblies.Contains(assembly.GetName().Name)).ToList();
+            List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => !IGNORED_ASSEMBLIES.Contains(assembly.GetName().Name)).ToList();
             return GetTypesInAssemblies(trimmedAssemblies).Where(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant()).ToList();
         }
     }

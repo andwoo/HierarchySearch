@@ -64,6 +64,11 @@ namespace HierarchySearch
             {
                 EditorGUILayout.HelpBox(m_SearchPrompt.message, m_SearchPrompt.type);
             }
+
+            if(Event.current.type == EventType.keyUp && Event.current.keyCode == KeyCode.Escape)
+            {
+                OnClear();
+            }
         }
 
         private void OnSearch(HierarchySearchType type, string term)
@@ -101,6 +106,11 @@ namespace HierarchySearch
             if (m_SearchResults.Contains(instanceId))
             {
                 GameObject go = (GameObject)EditorUtility.InstanceIDToObject(instanceId);
+                if(go == null)
+                {
+                    m_SearchResults.Remove(instanceId);
+                    return;
+                }
                 EditorGUI.DrawRect(selectionRect, HierarchySearchSettings.Instance.searchResultBackground);
                 EditorGUI.LabelField(selectionRect, go.name, EditorStyles.SearchResult);
 

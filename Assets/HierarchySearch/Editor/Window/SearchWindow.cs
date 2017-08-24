@@ -9,7 +9,7 @@ namespace HierarchySearch
 
     public class SearchWindow : EditorWindow
     {
-        [MenuItem("GameObject/HierarchySearch %#f", false, 200)]
+        [MenuItem("GameObject/Hierarchy Search %#f", false, 200)]
         private static void ShowSearchWindow()
         {
             SearchWindow window = (SearchWindow)EditorWindow.GetWindow(typeof(SearchWindow));
