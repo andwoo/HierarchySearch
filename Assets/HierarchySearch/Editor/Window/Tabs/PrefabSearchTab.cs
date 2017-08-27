@@ -97,7 +97,7 @@ namespace HierarchySearch
         private void DrawPrefabUI(string prefabPath)
         {
             EditorGUILayout.BeginVertical(GUI.skin.box);
-            if(GUILayout.Button(Path.GetFileNameWithoutExtension(prefabPath), GUIStyle.none))
+            if(GUILayout.Button(Path.GetFileNameWithoutExtension(prefabPath), EditorStyles.PrefabButton))
             {
                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(prefabPath));
             }

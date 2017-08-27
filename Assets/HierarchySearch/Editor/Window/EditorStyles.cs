@@ -158,6 +158,21 @@ namespace HierarchySearch
                 return m_SearchResult;
             }
         }
+
+        private static GUIStyle m_PrefabButton;
+		public static GUIStyle PrefabButton
+		{
+			get
+			{
+				if (m_PrefabButton == null)
+				{
+                    m_PrefabButton = new GUIStyle(GUIStyle.none);
+					m_PrefabButton.fontStyle = FontStyle.Bold;
+					m_PrefabButton.normal.textColor = EditorGUIUtility.isProSkin ? Color.white : Color.black;
+				}
+				return m_PrefabButton;
+			}
+		}
         #endregion
     }
 }
