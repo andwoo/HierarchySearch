@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿//#define ENABLE_PREFAB_SEARCH //experimental feature
+
+using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -18,28 +20,35 @@ namespace HierarchySearch
 
         private Dictionary<string, IWindowTab> m_Tabs;
         private string[] m_TabNames;
-        private int m_CurrentTab;
+        private int m_CurrentTabId;
 
         public SearchWindow()
         {
-            m_Tabs = new Dictionary<string, IWindowTab>();
-            m_Tabs.Add("Hierarchy", new HierarchySearchTab());
-            m_Tabs.Add("Prefab", new PrefabSearchTab());
-            m_Tabs.Add("Settings", new SettingsTab());
-            m_TabNames = m_Tabs.Keys.ToArray();
         }
 
         private void OnEnable()
         {
+            CreateWindowTabs();
             EditorStyles.Initialize();
-
-            Texture2D windowIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_LOGO));
+            
+            Texture2D windowIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_SEARCH));
             this.titleContent = new GUIContent("Search", windowIcon);
 
             foreach (var kvp in m_Tabs)
             {
                 kvp.Value.OnEnable();
             }
+        }
+
+        private void CreateWindowTabs()
+        {
+            m_Tabs = new Dictionary<string, IWindowTab>();
+            m_Tabs.Add("Hierarchy", new HierarchySearchTab(ForceWindowRepaint));
+#if ENABLE_PREFAB_SEARCH
+            m_Tabs.Add("Prefab", new PrefabSearchTab(ForceWindowRepaint));
+#endif
+            m_Tabs.Add("Settings", new SettingsTab());
+            m_TabNames = m_Tabs.Keys.ToArray();
         }
 
         private void OnDisable()
@@ -62,12 +71,24 @@ namespace HierarchySearch
         private void OnGUI()
         {
             EditorGUI.BeginChangeCheck();
-            m_CurrentTab = GUILayout.Toolbar(m_CurrentTab, m_TabNames);
-            if(EditorGUI.EndChangeCheck())
+            m_CurrentTabId = GUILayout.Toolbar(m_CurrentTabId, m_TabNames);
+            if(m_CurrentTabId >= m_Tabs.Count)
+            {
+                m_CurrentTabId = 0;
+            }
+            IWindowTab currentTab = m_Tabs[m_TabNames[m_CurrentTabId]];
+            if (EditorGUI.EndChangeCheck())
             {
                 GUI.FocusControl(null);
             }
-            m_Tabs[m_TabNames[m_CurrentTab]].OnGUI();
+
+            currentTab.OnGUI();
+            currentTab.OnGUIEnd();
+        }
+
+        private void ForceWindowRepaint()
+        {
+            Repaint();
         }
     }
 }

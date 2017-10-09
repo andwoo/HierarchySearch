@@ -10,20 +10,21 @@ namespace HierarchySearch
         public string message;
         public MessageType type;
     }
-
     
     public class HierarchySearchTab : IWindowTab
     {
         delegate void SearchHandler(string searchTerm, bool caseSensitive, HashSet<int> searchResults);
 
+        private Action m_OnRepaintWindow;
         private Dictionary<HierarchySearchType, SearchHandler> m_SearchHandlers;
         private HashSet<int> m_SearchResults;
         private SearchWidget<HierarchySearchType> m_SearchWidget;
         private SearchHelpBoxPrompt m_SearchPrompt;
         private Texture2D m_FoundIcon;
 
-        public HierarchySearchTab()
+        public HierarchySearchTab(Action onRepaintWindow)
         {
+            m_OnRepaintWindow = onRepaintWindow;
             m_SearchResults = new HashSet<int>();
             m_SearchPrompt = new SearchHelpBoxPrompt();
 
@@ -37,6 +38,7 @@ namespace HierarchySearch
 
         public void OnDestroy()
         {
+            m_OnRepaintWindow = null;
             m_FoundIcon = null;
             m_SearchWidget.OnDestroy();
             m_SearchWidget = null;
@@ -71,8 +73,18 @@ namespace HierarchySearch
             }
         }
 
+        public void OnGUIEnd()
+        {
+            m_SearchWidget.OnGUIEnd();
+        }
+
         private void OnSearch(HierarchySearchType type, string term)
         {
+            if(m_OnRepaintWindow != null)
+            {
+                m_OnRepaintWindow();
+            }
+
             m_SearchResults.Clear();
             EditorApplication.RepaintHierarchyWindow();
             if (string.IsNullOrEmpty(term))
@@ -99,6 +111,11 @@ namespace HierarchySearch
         {
             m_SearchResults.Clear();
             m_SearchPrompt.message = string.Empty;
+
+            if (m_OnRepaintWindow != null)
+            {
+                m_OnRepaintWindow();
+            }
         }
 
         private void HierarchyHighlightItem(int instanceId, Rect selectionRect)

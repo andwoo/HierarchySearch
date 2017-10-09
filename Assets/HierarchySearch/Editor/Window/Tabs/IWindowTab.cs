@@ -6,5 +6,6 @@
         void OnDisable();
         void OnDestroy();
         void OnGUI();
+        void OnGUIEnd();
     }
 }

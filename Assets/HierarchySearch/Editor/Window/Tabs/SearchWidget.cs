@@ -41,9 +41,8 @@ namespace HierarchySearch
             {
                 SearchType = (TSearchType)(object)EditorGUILayout.EnumPopup((object)SearchType as Enum, GUILayout.Width(100f));
                 SearchTerm = EditorGUILayout.TextField(SearchTerm);
-
-                bool isReturnPressed = Event.current.type == EventType.keyDown && Event.current.keyCode == KeyCode.Return;
-                if (EditorStyles.GetIconButton(m_SearchIcon) || isReturnPressed)
+                
+                if (EditorStyles.GetIconButton(m_SearchIcon))
                 {
                     if (m_OnSearch != null)
                     {
@@ -65,6 +64,26 @@ namespace HierarchySearch
             EditorGUILayout.EndHorizontal();
 
             CaseSensitive = EditorGUILayout.Toggle("Match case", CaseSensitive);
+        }
+
+        public void OnGUIEnd()
+        {
+            bool isReturnPressed = Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Return;
+            if (isReturnPressed && m_OnSearch != null)
+            {
+                m_OnSearch(SearchType, SearchTerm);
+                GUI.FocusControl(null);
+                return;
+            }
+
+            bool isEscapepressed = Event.current.type == EventType.KeyUp && Event.current.keyCode == KeyCode.Escape;
+            if (isEscapepressed && m_OnClear != null)
+            {
+                SearchTerm = string.Empty;
+                m_OnClear();
+                GUI.FocusControl(null);
+                return;
+            }
         }
     }
 }

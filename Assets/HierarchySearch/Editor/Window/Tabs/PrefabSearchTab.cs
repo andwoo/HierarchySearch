@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -9,14 +10,16 @@ namespace HierarchySearch
     {
         delegate void SearchHandler(string searchTerm, bool caseSensitive, HashSet<string> searchResults);
 
+        private Action m_OnRepaintWindow;
         private Dictionary<PrefabSearchType, SearchHandler> m_SearchHandlers;
         private HashSet<string> m_SearchResults;
         private SearchWidget<PrefabSearchType> m_SearchWidget;
         private SearchHelpBoxPrompt m_SearchPrompt;
         private Vector2 m_ScrollPosition;
 
-        public PrefabSearchTab()
+        public PrefabSearchTab(Action onRepaintWindow)
         {
+            m_OnRepaintWindow = onRepaintWindow;
             m_SearchPrompt = new SearchHelpBoxPrompt();
             m_SearchResults = new HashSet<string>();
 
@@ -31,11 +34,11 @@ namespace HierarchySearch
 
         public void OnDisable()
         {
-
         }
 
         public void OnDestroy()
         {
+            m_OnRepaintWindow = null;
             m_SearchWidget.OnDestroy();
             m_SearchWidget = null;
             m_SearchHandlers.Clear();
@@ -66,8 +69,18 @@ namespace HierarchySearch
             }
         }
 
+        public void OnGUIEnd()
+        {
+            m_SearchWidget.OnGUIEnd();
+        }
+
         private void OnSearch(PrefabSearchType type, string term)
         {
+            if(m_OnRepaintWindow != null)
+            {
+                m_OnRepaintWindow();
+            }
+
             m_SearchResults.Clear();
             if (string.IsNullOrEmpty(term))
             {
@@ -92,6 +105,11 @@ namespace HierarchySearch
         {
             m_SearchResults.Clear();
             m_SearchPrompt.message = string.Empty;
+
+            if (m_OnRepaintWindow != null)
+            {
+                m_OnRepaintWindow();
+            }
         }
 
         private void DrawPrefabUI(string prefabPath)
