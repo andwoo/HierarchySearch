@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace HierarchySearch
 {
@@ -16,7 +17,31 @@ namespace HierarchySearch
 
         public static List<GameObject> GetRootGameObjects()
         {
-            return UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects().ToList();
+            return SceneManager.GetActiveScene().GetRootGameObjects().ToList();
+        }
+
+        public static List<UnityEngine.Object> FindObjectsOfType(Type type)
+        {
+            List<UnityEngine.Object> results = new List<UnityEngine.Object>();
+            List<GameObject> rootObjects = GetRootGameObjects();
+            foreach(GameObject root in rootObjects)
+            {
+                results.AddRange(root.GetComponentsInChildren(type, true));
+            }
+            
+            return results;
+        }
+
+        public static List<TType> FindObjectsOfType<TType>() where TType : UnityEngine.Object
+        {
+            List<TType> results = new List<TType>();
+            List<GameObject> rootObjects = GetRootGameObjects();
+            foreach (GameObject root in rootObjects)
+            {
+                results.AddRange(root.GetComponentsInChildren<TType>(true));
+            }
+
+            return results;
         }
 
         public static List<GameObject> GetGameObjectsWithType(Type type)
@@ -24,8 +49,8 @@ namespace HierarchySearch
             List<GameObject> results = new List<GameObject>();
             if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
-                UnityEngine.Object[] objects = GameObject.FindObjectsOfType(type);
-                if (objects != null && objects.Length > 0)
+                List<UnityEngine.Object> objects = FindObjectsOfType(type);
+                if (objects != null && objects.Count > 0)
                 {
                     results = objects
                         .Where(component => component is Component)
@@ -51,7 +76,7 @@ namespace HierarchySearch
             fieldName = fieldName.Trim();
 
             List<GameObject> results = new List<GameObject>();
-            Component[] allComponents = GameObject.FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>();
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
@@ -86,7 +111,7 @@ namespace HierarchySearch
         public static List<GameObject> GetGameObjectsWithFieldTypes(List<Type> fieldTypes)
         {
             List<GameObject> results = new List<GameObject>();
-            Component[] allComponents = GameObject.FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>();
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
@@ -108,7 +133,7 @@ namespace HierarchySearch
             propertyName = propertyName.Trim();
 
             List<GameObject> results = new List<GameObject>();
-            Component[] allComponents = GameObject.FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>();
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
@@ -144,7 +169,7 @@ namespace HierarchySearch
         public static List<GameObject> GetGameObjectsWithPropertyTypes(List<Type> propertyTypes)
         {
             List<GameObject> results = new List<GameObject>();
-            Component[] allComponents = GameObject.FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>();
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
