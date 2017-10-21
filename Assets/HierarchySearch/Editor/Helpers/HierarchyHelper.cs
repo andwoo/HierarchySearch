@@ -20,36 +20,44 @@ namespace HierarchySearch
             return SceneManager.GetActiveScene().GetRootGameObjects().ToList();
         }
 
-        public static List<UnityEngine.Object> FindObjectsOfType(Type type)
+        public static List<UnityEngine.Object> FindObjectsOfType(Type type, bool includeInactive)
         {
-            List<UnityEngine.Object> results = new List<UnityEngine.Object>();
+            List <UnityEngine.Object> results = new List<UnityEngine.Object>();
             List<GameObject> rootObjects = GetRootGameObjects();
             foreach(GameObject root in rootObjects)
             {
-                results.AddRange(root.GetComponentsInChildren(type, true));
+                if(!includeInactive && !root.activeSelf)
+                {
+                    continue;
+                }
+                results.AddRange(root.GetComponentsInChildren(type, includeInactive));
             }
             
             return results;
         }
 
-        public static List<TType> FindObjectsOfType<TType>() where TType : UnityEngine.Object
+        public static List<TType> FindObjectsOfType<TType>(bool includeInactive) where TType : UnityEngine.Object
         {
             List<TType> results = new List<TType>();
             List<GameObject> rootObjects = GetRootGameObjects();
             foreach (GameObject root in rootObjects)
             {
-                results.AddRange(root.GetComponentsInChildren<TType>(true));
+                if (!includeInactive && !root.activeSelf)
+                {
+                    continue;
+                }
+                results.AddRange(root.GetComponentsInChildren<TType>(includeInactive));
             }
 
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithType(Type type)
+        public static List<GameObject> GetGameObjectsWithType(Type type, bool includeInactive)
         {
             List<GameObject> results = new List<GameObject>();
             if (type.IsSubclassOf(typeof(UnityEngine.Object)))
             {
-                List<UnityEngine.Object> objects = FindObjectsOfType(type);
+                List<UnityEngine.Object> objects = FindObjectsOfType(type, includeInactive);
                 if (objects != null && objects.Count > 0)
                 {
                     results = objects
@@ -61,22 +69,22 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithTypes(List<Type> types)
+        public static List<GameObject> GetGameObjectsWithTypes(List<Type> types, bool includeInactive)
         {
             List<GameObject> results = new List<GameObject>();
             foreach(Type type in types)
             {
-                results.AddRange(GetGameObjectsWithType(type));
+                results.AddRange(GetGameObjectsWithType(type, includeInactive));
             }
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithFieldName(string fieldName, bool caseSensitive)
+        public static List<GameObject> GetGameObjectsWithFieldName(string fieldName, bool caseSensitive, bool includeInactive)
         {
             fieldName = fieldName.Trim();
 
             List<GameObject> results = new List<GameObject>();
-            List<Component> allComponents = FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>(includeInactive);
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
@@ -103,15 +111,15 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithFieldType(string fieldType, bool caseSensitive)
+        public static List<GameObject> GetGameObjectsWithFieldType(string fieldType, bool caseSensitive, bool includeInactive)
         {
-            return GetGameObjectsWithFieldTypes(ReflectionHelper.GetTypesByName(fieldType, caseSensitive));
+            return GetGameObjectsWithFieldTypes(ReflectionHelper.GetTypesByName(fieldType, caseSensitive), includeInactive);
         }
 
-        public static List<GameObject> GetGameObjectsWithFieldTypes(List<Type> fieldTypes)
+        public static List<GameObject> GetGameObjectsWithFieldTypes(List<Type> fieldTypes, bool includeInactive)
         {
             List<GameObject> results = new List<GameObject>();
-            List<Component> allComponents = FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>(includeInactive);
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
@@ -128,12 +136,12 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithPropertyName(string propertyName, bool caseSensitive)
+        public static List<GameObject> GetGameObjectsWithPropertyName(string propertyName, bool caseSensitive, bool includeInactive)
         {
             propertyName = propertyName.Trim();
 
             List<GameObject> results = new List<GameObject>();
-            List<Component> allComponents = FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>(includeInactive);
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
@@ -161,15 +169,15 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithPropertyType(string propertyType, bool caseSensitive)
+        public static List<GameObject> GetGameObjectsWithPropertyType(string propertyType, bool caseSensitive, bool includeInactive)
         {
-            return GetGameObjectsWithPropertyTypes(ReflectionHelper.GetTypesByName(propertyType, caseSensitive));
+            return GetGameObjectsWithPropertyTypes(ReflectionHelper.GetTypesByName(propertyType, caseSensitive), includeInactive);
         }
 
-        public static List<GameObject> GetGameObjectsWithPropertyTypes(List<Type> propertyTypes)
+        public static List<GameObject> GetGameObjectsWithPropertyTypes(List<Type> propertyTypes, bool includeInactive)
         {
             List<GameObject> results = new List<GameObject>();
-            List<Component> allComponents = FindObjectsOfType<Component>();
+            List<Component> allComponents = FindObjectsOfType<Component>(includeInactive);
             foreach (Component component in allComponents)
             {
                 if (results.Contains(component.gameObject))
