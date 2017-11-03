@@ -17,7 +17,23 @@ namespace HierarchySearch
 
         public static List<GameObject> GetRootGameObjects()
         {
-            return SceneManager.GetActiveScene().GetRootGameObjects().ToList();
+            List<GameObject> rootObjects = new List<GameObject>();
+            for (int i = 0; i < SceneManager.sceneCount; ++i)
+            {
+                GameObject[] arr = SceneManager.GetSceneAt(i).GetRootGameObjects();
+                rootObjects.AddRange(arr);
+            }
+
+            if (Application.isPlaying)
+            {
+                GameObject temp = new GameObject();
+                UnityEngine.Object.DontDestroyOnLoad(temp);
+                rootObjects.AddRange(temp.scene.GetRootGameObjects());
+                rootObjects.Remove(temp);
+                GameObject.DestroyImmediate(temp);
+            }
+
+            return rootObjects;
         }
 
         public static List<UnityEngine.Object> FindObjectsOfType(Type type, bool includeInactive)
