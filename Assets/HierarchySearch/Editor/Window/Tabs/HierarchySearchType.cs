@@ -6,6 +6,7 @@
         FieldName,
         FieldType,
         PropertyName,
-        PropertyType
+        PropertyType,
+        GameObjectName
     }
 }

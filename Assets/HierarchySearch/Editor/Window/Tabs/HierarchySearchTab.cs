@@ -10,7 +10,7 @@ namespace HierarchySearch
         public string message;
         public MessageType type;
     }
-    
+
     public class HierarchySearchTab : IWindowTab
     {
         delegate void SearchHandler(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults);
@@ -35,6 +35,7 @@ namespace HierarchySearch
             m_SearchHandlers.Add(HierarchySearchType.FieldType, SearchFieldType);
             m_SearchHandlers.Add(HierarchySearchType.PropertyName, SearchPropertyName);
             m_SearchHandlers.Add(HierarchySearchType.PropertyType, SearchPropertyType);
+            m_SearchHandlers.Add(HierarchySearchType.GameObjectName, SearchGameObjectName);
         }
 
         public void OnDestroy()
@@ -69,7 +70,7 @@ namespace HierarchySearch
                 EditorGUILayout.HelpBox(m_SearchPrompt.message, m_SearchPrompt.type);
             }
 
-            if(Event.current.type == EventType.keyUp && Event.current.keyCode == KeyCode.Escape)
+            if (Event.current.type == EventType.keyUp && Event.current.keyCode == KeyCode.Escape)
             {
                 OnClear();
             }
@@ -82,7 +83,7 @@ namespace HierarchySearch
 
         private void OnSearch(HierarchySearchType type, string term)
         {
-            if(m_OnRepaintWindow != null)
+            if (m_OnRepaintWindow != null)
             {
                 m_OnRepaintWindow();
             }
@@ -95,7 +96,7 @@ namespace HierarchySearch
                 m_SearchPrompt.type = MessageType.Error;
                 return;
             }
-            
+
             m_SearchHandlers[type](term, m_SearchWidget.CaseSensitive, m_IncludeInactive, m_SearchResults);
             if (m_SearchResults.Count == 0)
             {
@@ -125,7 +126,7 @@ namespace HierarchySearch
             if (m_SearchResults.Contains(instanceId))
             {
                 GameObject go = (GameObject)EditorUtility.InstanceIDToObject(instanceId);
-                if(go == null)
+                if (go == null)
                 {
                     m_SearchResults.Remove(instanceId);
                     return;
@@ -140,14 +141,15 @@ namespace HierarchySearch
             }
         }
 
-#region Search Methods
+        #region Search Methods
         private static void SearchComponentType(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
         {
             List<Type> results = ReflectionHelper.GetTypesByName(searchTerm, caseSensitive);
             if (results != null)
             {
                 HierarchyHelper.GetGameObjectsWithTypes(results, includeInactive).ForEach(
-                go => {
+                go =>
+                {
                     int instanceId = go.GetInstanceID();
                     searchResults.Add(instanceId);
                     EditorGUIUtility.PingObject(instanceId);
@@ -198,6 +200,17 @@ namespace HierarchySearch
                 EditorGUIUtility.PingObject(instanceId);
             });
         }
-#endregion
+
+        private static void SearchGameObjectName(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        {
+            HierarchyHelper.FindObjectsByName(searchTerm, caseSensitive, includeInactive).ForEach(
+            go =>
+            {
+                int instanceId = go.GetInstanceID();
+                searchResults.Add(instanceId);
+                EditorGUIUtility.PingObject(instanceId);
+            });
+        }
+        #endregion
     }
 }

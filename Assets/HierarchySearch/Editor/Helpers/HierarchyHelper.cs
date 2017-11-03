@@ -36,6 +36,14 @@ namespace HierarchySearch
             return rootObjects;
         }
 
+        public static List<GameObject> FindObjectsByName(string name, bool caseSensitive, bool includeInactive)
+        {
+            return FindObjectsOfType<Transform>(includeInactive)
+                .Where(obj => caseSensitive ? obj.name == name : obj.name.ToLowerInvariant() == name.ToLowerInvariant())
+                .Select(obj => obj.gameObject)
+                .ToList();
+        }
+
         public static List<UnityEngine.Object> FindObjectsOfType(Type type, bool includeInactive)
         {
             List <UnityEngine.Object> results = new List<UnityEngine.Object>();
