@@ -13,7 +13,7 @@ namespace HierarchySearch
 
     public class HierarchySearchTab : IWindowTab
     {
-        delegate void SearchHandler(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults);
+        delegate void SearchHandler(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults);
 
         private Action m_OnRepaintWindow;
         private Dictionary<HierarchySearchType, SearchHandler> m_SearchHandlers;
@@ -21,7 +21,6 @@ namespace HierarchySearch
         private SearchWidget<HierarchySearchType> m_SearchWidget;
         private SearchHelpBoxPrompt m_SearchPrompt;
         private Texture2D m_FoundIcon;
-        private bool m_IncludeInactive;
 
         public HierarchySearchTab(Action onRepaintWindow)
         {
@@ -63,7 +62,6 @@ namespace HierarchySearch
         public void OnGUI()
         {
             m_SearchWidget.OnGUI();
-            m_IncludeInactive = EditorGUILayout.Toggle("Include inactive", m_IncludeInactive);
 
             if (!string.IsNullOrEmpty(m_SearchPrompt.message))
             {
@@ -97,7 +95,7 @@ namespace HierarchySearch
                 return;
             }
 
-            m_SearchHandlers[type](term, m_SearchWidget.CaseSensitive, m_IncludeInactive, m_SearchResults);
+            m_SearchHandlers[type](term, m_SearchWidget.CaseSensitive, m_SearchWidget.IncludeInactive, m_SearchWidget.MatchWholeWord, m_SearchResults);
             if (m_SearchResults.Count == 0)
             {
                 //repaint hierarchy
@@ -142,9 +140,9 @@ namespace HierarchySearch
         }
 
         #region Search Methods
-        private static void SearchComponentType(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        private static void SearchComponentType(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
-            List<Type> results = ReflectionHelper.GetTypesByName(searchTerm, caseSensitive);
+            List<Type> results = ReflectionHelper.GetTypesByName(searchTerm, caseSensitive, matchWholeWord);
             if (results != null)
             {
                 HierarchyHelper.GetGameObjectsWithTypes(results, includeInactive).ForEach(
@@ -157,9 +155,9 @@ namespace HierarchySearch
             }
         }
 
-        private static void SearchFieldName(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        private static void SearchFieldName(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
-            HierarchyHelper.GetGameObjectsWithFieldName(searchTerm, caseSensitive, includeInactive).ForEach(
+            HierarchyHelper.GetGameObjectsWithFieldName(searchTerm, caseSensitive, includeInactive, matchWholeWord).ForEach(
             go =>
             {
                 int instanceId = go.GetInstanceID();
@@ -168,9 +166,9 @@ namespace HierarchySearch
             });
         }
 
-        private static void SearchFieldType(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        private static void SearchFieldType(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
-            HierarchyHelper.GetGameObjectsWithFieldType(searchTerm, caseSensitive, includeInactive).ForEach(
+            HierarchyHelper.GetGameObjectsWithFieldType(searchTerm, caseSensitive, includeInactive, matchWholeWord).ForEach(
             go =>
             {
                 int instanceId = go.GetInstanceID();
@@ -179,9 +177,9 @@ namespace HierarchySearch
             });
         }
 
-        private static void SearchPropertyName(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        private static void SearchPropertyName(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
-            HierarchyHelper.GetGameObjectsWithPropertyName(searchTerm, caseSensitive, includeInactive).ForEach(
+            HierarchyHelper.GetGameObjectsWithPropertyName(searchTerm, caseSensitive, includeInactive, matchWholeWord).ForEach(
             go =>
             {
                 int instanceId = go.GetInstanceID();
@@ -190,9 +188,9 @@ namespace HierarchySearch
             });
         }
 
-        private static void SearchPropertyType(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        private static void SearchPropertyType(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
-            HierarchyHelper.GetGameObjectsWithPropertyType(searchTerm, caseSensitive, includeInactive).ForEach(
+            HierarchyHelper.GetGameObjectsWithPropertyType(searchTerm, caseSensitive, includeInactive, matchWholeWord).ForEach(
             go =>
             {
                 int instanceId = go.GetInstanceID();
@@ -201,9 +199,9 @@ namespace HierarchySearch
             });
         }
 
-        private static void SearchGameObjectName(string searchTerm, bool caseSensitive, bool includeInactive, HashSet<int> searchResults)
+        private static void SearchGameObjectName(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
-            HierarchyHelper.FindObjectsByName(searchTerm, caseSensitive, includeInactive).ForEach(
+            HierarchyHelper.FindObjectsByName(searchTerm, caseSensitive, includeInactive, matchWholeWord).ForEach(
             go =>
             {
                 int instanceId = go.GetInstanceID();

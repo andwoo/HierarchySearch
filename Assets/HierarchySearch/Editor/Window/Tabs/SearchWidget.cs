@@ -13,13 +13,20 @@ namespace HierarchySearch
 
         public TSearchType SearchType { get; private set; }
         public string SearchTerm { get; private set; }
-        public bool CaseSensitive { get; private set; }
+        private ButtonToggleWidget m_CaseSensitiveToggle;
+        private ButtonToggleWidget m_MatchWholeWordToggle;
+        private ButtonToggleWidget m_IncludeInactiveToggle;
+        public bool CaseSensitive { get { return m_CaseSensitiveToggle.IsOn; } }
+        public bool MatchWholeWord { get { return m_MatchWholeWordToggle.IsOn; } }
+        public bool IncludeInactive { get { return m_IncludeInactiveToggle.IsOn; } }
 
         public SearchWidget(TSearchType defaultType, Action<TSearchType, string> onSearch, Action onClear)
         {
             SearchType = defaultType;
             SearchTerm = string.Empty;
-            CaseSensitive = false;
+            m_CaseSensitiveToggle = new ButtonToggleWidget(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_MATCH_CASE), "Case sensitive");
+            m_MatchWholeWordToggle = new ButtonToggleWidget(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_MATCH_WHOLE_WORD), "Match whole word");
+            m_IncludeInactiveToggle = new ButtonToggleWidget(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_INACTIVE), "Include inactive GameObjects");
             m_OnSearch = onSearch;
             m_OnClear = onClear;
             
@@ -33,15 +40,19 @@ namespace HierarchySearch
             m_ClearIcon = null;
             m_OnSearch = null;
             m_OnClear = null;
+            m_CaseSensitiveToggle.OnDestroy();
+            m_MatchWholeWordToggle.OnDestroy();
+            m_IncludeInactiveToggle.OnDestroy();
         }
 
         public void OnGUI()
         {
             EditorGUILayout.BeginHorizontal();
             {
-                SearchType = (TSearchType)(object)EditorGUILayout.EnumPopup((object)SearchType as Enum, GUILayout.Width(100f));
-                SearchTerm = EditorGUILayout.TextField(SearchTerm);
-                
+                SearchType = (TSearchType)(object)EditorGUILayout.EnumPopup((object)SearchType as Enum, GUILayout.Width(90f));
+                SearchTerm = EditorGUILayout.TextField(SearchTerm, GUILayout.ExpandWidth(true), GUILayout.MaxWidth(float.MaxValue));
+
+                //GUILayout.FlexibleSpace();
                 if (EditorStyles.GetIconButton(m_SearchIcon))
                 {
                     if (m_OnSearch != null)
@@ -53,7 +64,7 @@ namespace HierarchySearch
                 {
                     SearchTerm = string.Empty;
                     GUI.FocusControl(null);
-                    if(m_OnClear != null)
+                    if (m_OnClear != null)
                     {
                         m_OnClear();
                     }
@@ -62,8 +73,14 @@ namespace HierarchySearch
                 }
             }
             EditorGUILayout.EndHorizontal();
-
-            CaseSensitive = EditorGUILayout.Toggle("Match case", CaseSensitive);
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.LabelField("", GUILayout.MaxWidth(90f));
+                m_CaseSensitiveToggle.OnGUI();
+                m_MatchWholeWordToggle.OnGUI();
+                m_IncludeInactiveToggle.OnGUI();
+            }
+            EditorGUILayout.EndHorizontal();
         }
 
         public void OnGUIEnd()

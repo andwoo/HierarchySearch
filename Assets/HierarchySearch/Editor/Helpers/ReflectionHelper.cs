@@ -77,17 +77,22 @@ namespace HierarchySearch
                 BindingFlags.Public).ToList();
         }
 
-        public static List<Type> GetTypesByName(string name, bool caseSensitive)
+        public static List<Type> GetTypesByName(string name, bool caseSensitive, bool matchWholeWord)
         {
             name = name.Trim();
-
+            List<Type> foundTypes = new List<Type>();
             if (RESERVED_TYPES.ContainsKey(name))
             {
-                return new List<Type>() { RESERVED_TYPES[name] };
+                foundTypes.Add(RESERVED_TYPES[name]);
+                if(matchWholeWord)
+                {
+                    return foundTypes;
+                }
             }
 
             List<Assembly> trimmedAssemblies = GetAssemblies().Where(assembly => !IGNORED_ASSEMBLIES.Contains(assembly.GetName().Name)).ToList();
-            return GetTypesInAssemblies(trimmedAssemblies).Where(field => caseSensitive ? field.Name == name : field.Name.ToLowerInvariant() == name.ToLowerInvariant()).ToList();
+            foundTypes.AddRange(GetTypesInAssemblies(trimmedAssemblies).Where(type => StringMatchHelper.DoesNameMatch(type.Name, name, caseSensitive, matchWholeWord)));
+            return foundTypes;
         }
     }
 }

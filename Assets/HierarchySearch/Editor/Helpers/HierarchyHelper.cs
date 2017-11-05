@@ -36,10 +36,10 @@ namespace HierarchySearch
             return rootObjects;
         }
 
-        public static List<GameObject> FindObjectsByName(string name, bool caseSensitive, bool includeInactive)
+        public static List<GameObject> FindObjectsByName(string name, bool caseSensitive, bool includeInactive, bool matchWholeWord)
         {
             return FindObjectsOfType<Transform>(includeInactive)
-                .Where(obj => caseSensitive ? obj.name == name : obj.name.ToLowerInvariant() == name.ToLowerInvariant())
+                .Where(obj => StringMatchHelper.DoesNameMatch(obj.name, name, caseSensitive, matchWholeWord))
                 .Select(obj => obj.gameObject)
                 .ToList();
         }
@@ -47,6 +47,10 @@ namespace HierarchySearch
         public static List<UnityEngine.Object> FindObjectsOfType(Type type, bool includeInactive)
         {
             List <UnityEngine.Object> results = new List<UnityEngine.Object>();
+            if(!type.IsSubclassOf(typeof(Component)))
+            {
+                return results;
+            }
             List<GameObject> rootObjects = GetRootGameObjects();
             foreach(GameObject root in rootObjects)
             {
@@ -103,7 +107,7 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithFieldName(string fieldName, bool caseSensitive, bool includeInactive)
+        public static List<GameObject> GetGameObjectsWithFieldName(string fieldName, bool caseSensitive, bool includeInactive, bool matchWholeWord)
         {
             fieldName = fieldName.Trim();
 
@@ -116,17 +120,7 @@ namespace HierarchySearch
                     continue;
                 }
                 List<FieldInfo> fields = ReflectionHelper.GetFieldsForType(component.GetType());
-                bool found = fields.FirstOrDefault(field =>
-                {
-                    if(caseSensitive)
-                    {
-                        return field.Name == fieldName;
-                    }
-                    else
-                    {
-                        return field.Name.ToLowerInvariant() == fieldName.ToLowerInvariant();
-                    }
-                }) != null;
+                bool found = fields.FirstOrDefault(field => StringMatchHelper.DoesNameMatch(field.Name, fieldName, caseSensitive, matchWholeWord)) != null;
                 if (found)
                 {
                     results.Add(component.gameObject);
@@ -135,9 +129,9 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithFieldType(string fieldType, bool caseSensitive, bool includeInactive)
+        public static List<GameObject> GetGameObjectsWithFieldType(string fieldType, bool caseSensitive, bool includeInactive, bool matchWholeWord)
         {
-            return GetGameObjectsWithFieldTypes(ReflectionHelper.GetTypesByName(fieldType, caseSensitive), includeInactive);
+            return GetGameObjectsWithFieldTypes(ReflectionHelper.GetTypesByName(fieldType, caseSensitive, matchWholeWord), includeInactive);
         }
 
         public static List<GameObject> GetGameObjectsWithFieldTypes(List<Type> fieldTypes, bool includeInactive)
@@ -160,7 +154,7 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithPropertyName(string propertyName, bool caseSensitive, bool includeInactive)
+        public static List<GameObject> GetGameObjectsWithPropertyName(string propertyName, bool caseSensitive, bool includeInactive, bool matchWholeWord)
         {
             propertyName = propertyName.Trim();
 
@@ -173,18 +167,7 @@ namespace HierarchySearch
                     continue;
                 }
                 List<PropertyInfo> properties = ReflectionHelper.GetPropertiesForType(component.GetType());
-                bool found = properties.FirstOrDefault(property =>
-                {
-                    if(caseSensitive)
-                    {
-                        return property.Name == propertyName;
-                    }
-                    else
-                    {
-                        return property.Name.ToLowerInvariant() == propertyName.ToLowerInvariant();
-                    }
-                }) != null;
-
+                bool found = properties.FirstOrDefault(property => StringMatchHelper.DoesNameMatch(property.Name, propertyName, caseSensitive, matchWholeWord)) != null;
                 if (found)
                 {
                     results.Add(component.gameObject);
@@ -193,9 +176,9 @@ namespace HierarchySearch
             return results;
         }
 
-        public static List<GameObject> GetGameObjectsWithPropertyType(string propertyType, bool caseSensitive, bool includeInactive)
+        public static List<GameObject> GetGameObjectsWithPropertyType(string propertyType, bool caseSensitive, bool includeInactive, bool matchWholeWord)
         {
-            return GetGameObjectsWithPropertyTypes(ReflectionHelper.GetTypesByName(propertyType, caseSensitive), includeInactive);
+            return GetGameObjectsWithPropertyTypes(ReflectionHelper.GetTypesByName(propertyType, caseSensitive, matchWholeWord), includeInactive);
         }
 
         public static List<GameObject> GetGameObjectsWithPropertyTypes(List<Type> propertyTypes, bool includeInactive)

@@ -6,9 +6,13 @@ namespace HierarchySearch
     public static class EditorStyles
     {
         #region Icons
+        public const string ICON_WINDOW = "ic_window_icon";
         public const string ICON_SEARCH = "ic_search";
         public const string ICON_CLOSE = "ic_close";
         public const string ICON_NOTIFICATION = "ic_priority_high";
+        public const string ICON_MATCH_CASE = "ic_match_case";
+        public const string ICON_MATCH_WHOLE_WORD = "ic_whole_word";
+        public const string ICON_INACTIVE = "ic_inactive";
         public const string ICON_LOGO = "ic_logo";
         public const string ICON_PREFAB = "PrefabNormal Icon";
         public const string BANNER_LOGO = "hierachy-search-banner";
@@ -84,7 +88,7 @@ namespace HierarchySearch
 
         public static bool GetIconButton(Texture2D icon)
         {
-            return GUILayout.Button(icon, GUILayout.Width(30f), GUILayout.Height(18f));
+            return GUILayout.Button(icon, NormalButton, GUILayout.Width(25f), GUILayout.Height(18f));
         }
 
         #region Layouts
@@ -160,19 +164,46 @@ namespace HierarchySearch
         }
 
         private static GUIStyle m_PrefabButton;
-		public static GUIStyle PrefabButton
-		{
-			get
-			{
-				if (m_PrefabButton == null)
-				{
+        public static GUIStyle PrefabButton
+        {
+            get
+            {
+                if (m_PrefabButton == null)
+                {
                     m_PrefabButton = new GUIStyle(GUIStyle.none);
-					m_PrefabButton.fontStyle = FontStyle.Bold;
-					m_PrefabButton.normal.textColor = EditorGUIUtility.isProSkin ? Color.white : Color.black;
-				}
-				return m_PrefabButton;
-			}
-		}
+                    m_PrefabButton.fontStyle = FontStyle.Bold;
+                    m_PrefabButton.normal.textColor = EditorGUIUtility.isProSkin ? Color.white : Color.black;
+                }
+                return m_PrefabButton;
+            }
+        }
+
+        private static GUIStyle m_ActiveButton;
+        public static GUIStyle ActiveButton
+        {
+            get
+            {
+                if (m_ActiveButton == null)
+                {
+                    m_ActiveButton = new GUIStyle(GUI.skin.button);
+                    m_ActiveButton.normal = m_ActiveButton.active;
+                }
+                return m_ActiveButton;
+            }
+        }
+
+        private static GUIStyle m_NormalButton;
+        public static GUIStyle NormalButton
+        {
+            get
+            {
+                if (m_NormalButton == null)
+                {
+                    m_NormalButton = new GUIStyle(GUI.skin.button);
+                }
+                return m_NormalButton;
+            }
+        }
         #endregion
     }
 }

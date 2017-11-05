@@ -22,16 +22,12 @@ namespace HierarchySearch
         private string[] m_TabNames;
         private int m_CurrentTabId;
 
-        public SearchWindow()
-        {
-        }
-
         private void OnEnable()
         {
             CreateWindowTabs();
             EditorStyles.Initialize();
             
-            Texture2D windowIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_SEARCH));
+            Texture2D windowIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_WINDOW));
             this.titleContent = new GUIContent("Search", windowIcon);
 
             foreach (var kvp in m_Tabs)
