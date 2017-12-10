@@ -24,8 +24,9 @@ namespace HierarchySearch
         public void OnEnable()
         {
             m_Banner = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.BANNER_LOGO));
-            searchResultBackground = HierarchySearchSettings.Instance.searchResultBackground;
-            searchResultText = HierarchySearchSettings.Instance.searchResultText;
+
+            searchResultBackground = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, EditorStyles.Orange);
+            searchResultText = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_TEXT_COLOR, EditorStyles.Yellow);
         }
 
         public void OnGUI()
@@ -36,6 +37,11 @@ namespace HierarchySearch
             if (GUILayout.Button("Save"))
             {
                 Save();
+            }
+
+            if (GUILayout.Button("Reset"))
+            {
+                Reset();
             }
 
             EditorGUILayout.Space();
@@ -49,12 +55,19 @@ namespace HierarchySearch
 
         private void Save()
         {
-            HierarchySearchSettings.Instance.searchResultBackground = searchResultBackground;
-            HierarchySearchSettings.Instance.searchResultText = searchResultText;
+            EditorPrefsUtils.SaveColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, searchResultBackground);
+            EditorPrefsUtils.SaveColor(EditorPrefKeys.KEY_TEXT_COLOR, searchResultText);
 
-            HierarchySearchSettings.Instance.Save();
             EditorStyles.Reset();
             EditorApplication.RepaintHierarchyWindow();
+        }
+
+        private void Reset()
+        {
+            searchResultBackground = EditorStyles.Orange;
+            searchResultText = EditorStyles.Yellow;
+
+            Save();
         }
     }
 }

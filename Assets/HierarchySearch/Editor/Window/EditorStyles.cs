@@ -40,6 +40,9 @@ namespace HierarchySearch
         public static Color BlueGrey;
         public static Color White;
         public static Color Black;
+
+        public static Color BackgroundColor { get; private set; }
+        public static Color TextColor { get; private set; }
         #endregion
 
         private const string PRO_SKIN_RESOURCE_FOLDER = "ProTheme";
@@ -68,6 +71,8 @@ namespace HierarchySearch
             ColorUtility.TryParseHtmlString("#607d8b", out BlueGrey);
             ColorUtility.TryParseHtmlString("#ffffff", out White);
             ColorUtility.TryParseHtmlString("#000000", out Black);
+
+            Reset();
         }
 
         public static void Reset()
@@ -76,6 +81,9 @@ namespace HierarchySearch
             m_MediumButtonWidth = null;
             m_Header = null;
             m_SearchResult = null;
+
+            BackgroundColor = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, EditorStyles.Orange);
+            TextColor = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_TEXT_COLOR, EditorStyles.Yellow);
         }
 
         public static string ThemeFolder
@@ -157,7 +165,7 @@ namespace HierarchySearch
                 {
                     m_SearchResult = new GUIStyle(GUI.skin.label);
                     m_SearchResult.fontStyle = FontStyle.Bold;
-                    m_SearchResult.normal.textColor = HierarchySearchSettings.Instance.searchResultText;
+                    m_SearchResult.normal.textColor = TextColor;
                 }
                 return m_SearchResult;
             }

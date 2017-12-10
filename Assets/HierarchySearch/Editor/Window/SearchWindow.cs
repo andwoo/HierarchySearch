@@ -1,14 +1,10 @@
-﻿//#define ENABLE_PREFAB_SEARCH //experimental feature
-
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace HierarchySearch
 {
-    delegate void SearchHandler(string searchTerm, bool caseSensitive, HashSet<int> searchResults);
-
     public class SearchWindow : EditorWindow
     {
         [MenuItem("GameObject/Hierarchy Search %#f", false, 200)]
@@ -40,9 +36,6 @@ namespace HierarchySearch
         {
             m_Tabs = new Dictionary<string, IWindowTab>();
             m_Tabs.Add("Hierarchy", new HierarchySearchTab(ForceWindowRepaint));
-#if ENABLE_PREFAB_SEARCH
-            m_Tabs.Add("Prefab", new PrefabSearchTab(ForceWindowRepaint));
-#endif
             m_Tabs.Add("Settings", new SettingsTab());
             m_TabNames = m_Tabs.Keys.ToArray();
         }

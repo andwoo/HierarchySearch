@@ -49,7 +49,13 @@ namespace HierarchySearch
         public void OnEnable()
         {
             m_FoundIcon = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.ICON_NOTIFICATION));
-            m_SearchWidget = new SearchWidget<HierarchySearchType>(HierarchySearchType.Component, OnSearch, OnClear);
+            m_SearchWidget = new SearchWidget<HierarchySearchType>(OnSearch, OnClear, Save);
+            m_SearchWidget.SetState(
+                EditorPrefsUtils.LoadEnum<HierarchySearchType>(EditorPrefKeys.KEY_SEARCH_TYPE, HierarchySearchType.Component),
+                EditorPrefsUtils.LoadString(EditorPrefKeys.KEY_SEARCH_TERM, string.Empty),
+                EditorPrefsUtils.LoadBool(EditorPrefKeys.KEY_CASE_SENSITIVE, false),
+                EditorPrefsUtils.LoadBool(EditorPrefKeys.KEY_MATCH_WHOLE_WORD, false),
+                EditorPrefsUtils.LoadBool(EditorPrefKeys.KEY_INCLUDE_INACTIVE, true));
 
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyHighlightItem;
         }
@@ -79,6 +85,15 @@ namespace HierarchySearch
             m_SearchWidget.OnGUIEnd();
         }
 
+        private void Save()
+        {
+            EditorPrefsUtils.SaveEnum<HierarchySearchType>(EditorPrefKeys.KEY_SEARCH_TYPE, m_SearchWidget.SearchType);
+            EditorPrefsUtils.SaveString(EditorPrefKeys.KEY_SEARCH_TERM, m_SearchWidget.SearchTerm);
+            EditorPrefsUtils.SaveBool(EditorPrefKeys.KEY_CASE_SENSITIVE, m_SearchWidget.CaseSensitive);
+            EditorPrefsUtils.SaveBool(EditorPrefKeys.KEY_MATCH_WHOLE_WORD, m_SearchWidget.MatchWholeWord);
+            EditorPrefsUtils.SaveBool(EditorPrefKeys.KEY_INCLUDE_INACTIVE, m_SearchWidget.IncludeInactive);
+        }
+
         private void OnSearch(HierarchySearchType type, string term)
         {
             if (m_OnRepaintWindow != null)
@@ -86,6 +101,7 @@ namespace HierarchySearch
                 m_OnRepaintWindow();
             }
 
+            Save();
             m_SearchResults.Clear();
             EditorApplication.RepaintHierarchyWindow();
             if (string.IsNullOrEmpty(term))
@@ -113,6 +129,8 @@ namespace HierarchySearch
             m_SearchResults.Clear();
             m_SearchPrompt.message = string.Empty;
 
+            Save();
+
             if (m_OnRepaintWindow != null)
             {
                 m_OnRepaintWindow();
@@ -129,7 +147,7 @@ namespace HierarchySearch
                     m_SearchResults.Remove(instanceId);
                     return;
                 }
-                EditorGUI.DrawRect(selectionRect, HierarchySearchSettings.Instance.searchResultBackground);
+                EditorGUI.DrawRect(selectionRect, EditorStyles.BackgroundColor);
                 EditorGUI.LabelField(selectionRect, go.name, EditorStyles.SearchResult);
 
                 Rect iconRect = selectionRect;
