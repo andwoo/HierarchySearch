@@ -10,8 +10,8 @@ namespace HierarchySearch
         private const string VERSION = "1.0.0";
         
         private Texture2D m_Banner;
-        private Color searchResultBackground = EditorStyles.Orange;
-        private Color searchResultText = EditorStyles.Yellow;
+        private Color searchResultBackground;
+        private Color searchResultText;
 
         public void OnDestroy()
         {
@@ -24,9 +24,9 @@ namespace HierarchySearch
         public void OnEnable()
         {
             m_Banner = Resources.Load<Texture2D>(string.Format("{0}/{1}", EditorStyles.ThemeFolder, EditorStyles.BANNER_LOGO));
-
-            searchResultBackground = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, EditorStyles.Orange);
-            searchResultText = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_TEXT_COLOR, EditorStyles.Yellow);
+            
+            searchResultBackground = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, EditorStyles.DefaultBackgroundColor);
+            searchResultText = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_TEXT_COLOR, EditorStyles.DefaultTextColor);
         }
 
         public void OnGUI()
@@ -64,8 +64,8 @@ namespace HierarchySearch
 
         private void Reset()
         {
-            searchResultBackground = EditorStyles.Orange;
-            searchResultText = EditorStyles.Yellow;
+            searchResultBackground = EditorStyles.DefaultBackgroundColor;
+            searchResultText = EditorStyles.DefaultTextColor;
 
             Save();
         }

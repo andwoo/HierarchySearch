@@ -19,30 +19,24 @@ namespace HierarchySearch
         #endregion
 
         #region Colours
-        public static Color Red;
-        public static Color Pink;
-        public static Color Purple;
-        public static Color DeepPurple;
-        public static Color Indigo;
-        public static Color Blue;
-        public static Color LightBlue;
-        public static Color Cyan;
-        public static Color Teal;
-        public static Color Green;
-        public static Color LightGreen;
-        public static Color Lime;
-        public static Color Yellow;
-        public static Color Amber;
-        public static Color Orange;
-        public static Color DeepOrange;
-        public static Color Brown;
-        public static Color Grey;
-        public static Color BlueGrey;
-        public static Color White;
-        public static Color Black;
 
         public static Color BackgroundColor { get; private set; }
         public static Color TextColor { get; private set; }
+
+        private static Color sz_ProDefaultBackgroundColor;
+        private static Color sz_ProDefaultTextColor;
+        private static Color sz_DefaultBackgroundColor;
+        private static Color sz_DefaultTextColor;
+        
+        public static Color DefaultBackgroundColor
+        {
+            get { return EditorGUIUtility.isProSkin ? sz_ProDefaultBackgroundColor : sz_DefaultBackgroundColor; }
+        }
+        
+        public static Color DefaultTextColor
+        {
+            get { return EditorGUIUtility.isProSkin ? sz_ProDefaultTextColor : sz_DefaultTextColor; }
+        }
         #endregion
 
         private const string PRO_SKIN_RESOURCE_FOLDER = "ProTheme";
@@ -50,27 +44,10 @@ namespace HierarchySearch
 
         public static void Initialize()
         {
-            ColorUtility.TryParseHtmlString("#f44336", out Red);
-            ColorUtility.TryParseHtmlString("#e91e63", out Pink);
-            ColorUtility.TryParseHtmlString("#9c27b0", out Purple);
-            ColorUtility.TryParseHtmlString("#673ab7", out DeepPurple);
-            ColorUtility.TryParseHtmlString("#3f51b5", out Indigo);
-            ColorUtility.TryParseHtmlString("#2196f3", out Blue);
-            ColorUtility.TryParseHtmlString("#03a9f4", out LightBlue);
-            ColorUtility.TryParseHtmlString("#00bcd4", out Cyan);
-            ColorUtility.TryParseHtmlString("#009688", out Teal);
-            ColorUtility.TryParseHtmlString("#4caf50", out Green);
-            ColorUtility.TryParseHtmlString("#8bc34a", out LightGreen);
-            ColorUtility.TryParseHtmlString("#cddc39", out Lime);
-            ColorUtility.TryParseHtmlString("#ffeb3b", out Yellow);
-            ColorUtility.TryParseHtmlString("#ffc107", out Amber);
-            ColorUtility.TryParseHtmlString("#ff9800", out Orange);
-            ColorUtility.TryParseHtmlString("#ff5722", out DeepOrange);
-            ColorUtility.TryParseHtmlString("#795548", out Brown);
-            ColorUtility.TryParseHtmlString("#9e9e9e", out Grey);
-            ColorUtility.TryParseHtmlString("#607d8b", out BlueGrey);
-            ColorUtility.TryParseHtmlString("#ffffff", out White);
-            ColorUtility.TryParseHtmlString("#000000", out Black);
+            ColorUtility.TryParseHtmlString("#3e5f96", out sz_ProDefaultBackgroundColor);
+            ColorUtility.TryParseHtmlString("#e1e6ef", out sz_ProDefaultTextColor);
+            ColorUtility.TryParseHtmlString("#3e7de7", out sz_DefaultBackgroundColor);
+            ColorUtility.TryParseHtmlString("#e1ebfb", out sz_DefaultTextColor);
 
             Reset();
         }
@@ -82,8 +59,8 @@ namespace HierarchySearch
             m_Header = null;
             m_SearchResult = null;
 
-            BackgroundColor = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, EditorStyles.Orange);
-            TextColor = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_TEXT_COLOR, EditorStyles.Yellow);
+            BackgroundColor = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_BACKGROUND_COLOR, DefaultBackgroundColor);
+            TextColor = EditorPrefsUtils.LoadColor(EditorPrefKeys.KEY_TEXT_COLOR, DefaultTextColor);
         }
 
         public static string ThemeFolder
