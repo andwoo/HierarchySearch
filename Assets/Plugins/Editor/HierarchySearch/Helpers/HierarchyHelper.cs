@@ -74,7 +74,7 @@ namespace HierarchySearch
                 {
                     continue;
                 }
-                results.AddRange(root.GetComponentsInChildren<TType>(includeInactive));
+                results.AddRange(root.GetComponentsInChildren<TType>(includeInactive).Where(obj => obj != default(TType)));
             }
 
             return results;
