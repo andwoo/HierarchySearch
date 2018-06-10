@@ -5,21 +5,22 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/TD2D/Scenes/MainMenu.unity
     guid: d4ee3db4d2162dc4686d3012fbb796e6
-  - enabled: 1
+  - enabled: 0
     path: Assets/TD2D/Scenes/LevelChoose.unity
     guid: f809dec588d6d2144977f499825d671d
-  - enabled: 1
+  - enabled: 0
     path: Assets/TD2D/Scenes/LevelUI.unity
     guid: ed4d7690438bbac469bf29025714b03b
-  - enabled: 1
+  - enabled: 0
     path: Assets/TD2D/Scenes/Level1.unity
     guid: 4d946bfed02737843b9b4f591bad113e
-  - enabled: 1
+  - enabled: 0
     path: Assets/TD2D/Scenes/Level2.unity
     guid: 609608637aaeefa4ebbd43fe684c894c
-  - enabled: 1
+  - enabled: 0
     path: Assets/TD2D/Scenes/Level3.unity
-    guid: 00000000000000000000000000000000
+    guid: 373b5e82c60a45d4b90f4744802d02ab
+  m_configObjects: {}
