@@ -200,5 +200,17 @@ namespace HierarchySearch
             }
             return results;
         }
+
+        public static List<GameObject> GetGameObjectsWithLayer(int targetLayer, bool includeInactive)
+        {
+            if (targetLayer < 0)
+            {
+                return new List<GameObject>();
+            }
+            return FindObjectsOfType<Transform>(includeInactive)
+                .Where(obj => obj.gameObject.layer == targetLayer)
+                .Select(obj => obj.gameObject)
+                .ToList();
+        }
     }
 }

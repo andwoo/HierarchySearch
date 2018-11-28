@@ -7,6 +7,7 @@
         FieldType,
         PropertyName,
         PropertyType,
-        GameObjectName
+        GameObjectName,
+        Layer
     }
 }

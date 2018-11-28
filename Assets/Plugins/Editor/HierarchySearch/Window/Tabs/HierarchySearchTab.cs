@@ -35,6 +35,7 @@ namespace HierarchySearch
             m_SearchHandlers.Add(HierarchySearchType.PropertyName, SearchPropertyName);
             m_SearchHandlers.Add(HierarchySearchType.PropertyType, SearchPropertyType);
             m_SearchHandlers.Add(HierarchySearchType.GameObjectName, SearchGameObjectName);
+            m_SearchHandlers.Add(HierarchySearchType.Layer, SearchLayerName);
         }
 
         public void OnDestroy()
@@ -115,7 +116,14 @@ namespace HierarchySearch
             if (m_SearchResults.Count == 0)
             {
                 //repaint hierarchy
-                m_SearchPrompt.message = string.Format("Could not find match for \"{0}\"", term);
+                if (type == HierarchySearchType.Layer)
+                {
+                    m_SearchPrompt.message = string.Format("Could not find match for \"{0}\". The layer name must be exact and is case sensitive.", term);
+                }
+                else
+                {
+                    m_SearchPrompt.message = string.Format("Could not find match for \"{0}\"", term);
+                }
                 m_SearchPrompt.type = MessageType.Info;
             }
             else
@@ -220,12 +228,24 @@ namespace HierarchySearch
         private static void SearchGameObjectName(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
         {
             HierarchyHelper.FindObjectsByName(searchTerm, caseSensitive, includeInactive, matchWholeWord).ForEach(
-            go =>
-            {
-                int instanceId = go.GetInstanceID();
-                searchResults.Add(instanceId);
-                EditorGUIUtility.PingObject(instanceId);
-            });
+                go =>
+                {
+                    int instanceId = go.GetInstanceID();
+                    searchResults.Add(instanceId);
+                    EditorGUIUtility.PingObject(instanceId);
+                });
+        }
+        
+        private static void SearchLayerName(string searchTerm, bool caseSensitive, bool includeInactive, bool matchWholeWord, HashSet<int> searchResults)
+        {
+            int targetLayer = LayerMask.NameToLayer(searchTerm);
+            HierarchyHelper.GetGameObjectsWithLayer(targetLayer, includeInactive).ForEach(
+                go =>
+                {
+                    int instanceId = go.GetInstanceID();
+                    searchResults.Add(instanceId);
+                    EditorGUIUtility.PingObject(instanceId);
+                });
         }
         #endregion
     }
